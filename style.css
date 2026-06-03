@@ -1,5 +1,4 @@
 /* --- 🪐 Deep Space Viewport & Canvas Layout --- */
-/* --- 🪐 Deep Space Viewport & Canvas Layout --- */
 body {
   margin: 0;
   padding: 0;
@@ -20,11 +19,11 @@ body {
   position: absolute;
   width: 2000px;
   height: 2000px;
-  /* Centers the 2000x2000 canvas right in the middle of your monitor on load 🎯 */
   top: calc(50vh - 1000px);
   left: calc(50vw - 1000px);
-  transform-origin: center center; /* Scale transformations now anchor from the canvas center */
+  transform-origin: center center; 
   transition: transform 1000ms cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 10; /* ⭐ Raised above overlay background to re-enable interaction and hover states! */
 }
 
 /* --- 👑 Fixed Glowing Top Headers --- */
@@ -35,7 +34,7 @@ body {
   transform: translateX(-50%);
   text-align: center;
   z-index: 50;
-  pointer-events: none; /* Allows clicks to pass through to the canvas */
+  pointer-events: none; 
 }
 
 .title-main {
@@ -62,24 +61,22 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(5, 5, 10, 0.75);
+  background-color: rgba(3, 3, 8, 0.82); /* Deep cosmic shade tint */
   opacity: 0;
   pointer-events: none;
   transition: opacity 500ms ease-in-out;
-  z-index: 5;
+  z-index: 5; /* Stays beneath active canvas selection map */
 }
 
 .galaxy-overlay.active {
   opacity: 1;
-  pointer-events: auto; /* Catches clicks to block background interaction */
 }
 
 /* --- 🏢 Company Hub Structures & Rings --- */
 .galaxy-container {
   position: absolute;
-  width: 120px;
-  height: 120px;
-  /* Adjusts coordinate mapping so the actual center of the circle sits on the coordinate point */
+  width: 180px; /* 🚀 Enlarged Core Hub diameter */
+  height: 180px;
   transform: translate(-50%, -50%);
   transform-style: preserve-3d;
 }
@@ -89,60 +86,69 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: #101025;
-  border: 2px solid #00ffcc;
+  background: #0b0b18;
+  border: 3px solid #00ffcc;
   color: #ffffff;
   font-family: 'Orbitron', sans-serif;
-  font-weight: bold;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  font-weight: 700;
   cursor: pointer;
-  z-index: 10;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 12;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.35);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .center-hub:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(0, 255, 204, 0.8);
+  border-color: #a0f0ed;
+  box-shadow: 0 0 30px rgba(0, 255, 204, 0.75);
 }
 
 /* --- 🖼️ Character Nodes & Hover Labels --- */
 .character-node {
   position: absolute;
-  width: 80px;
-  height: 80px;
-  /* Positions the upper-left corner of the node perfectly inside the parent center */
-  top: 20px;
-  left: 20px;
+  width: 110px; /* 🚀 Enlarged Character node diameter */
+  height: 110px;
+  /* Centers nodes inside the 180px bounding box container */
+  top: 35px; 
+  left: 35px;
   border-radius: 50%;
-  border: 2px solid #333344;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   background-size: cover;
-  background-position: center;
+  background-position: top center; /* 💡 Centers the framing on faces */
   background-repeat: no-repeat;
-  z-index: 20;
+  z-index: 25; /* Stays on the highest layer for active interactions */
   transform: translate(0, 0) scale(0);
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .character-node:hover {
-  transform: translate(var(--x), var(--y)) scale(1.15) !important; /* Retains its ring coordinates while expanding slightly */
-  border-color: var(--glow-color);
-  box-shadow: 0 0 20px var(--glow-color);
+  transform: translate(var(--x), var(--y)) scale(1.2) !important;
+  border-color: var(--glow-color) !important;
+  box-shadow: 0 0 25px var(--glow-color);
   cursor: pointer;
 }
 
 .node-label {
   position: absolute;
-  bottom: -25px;
+  bottom: -32px;
   left: 50%;
   transform: translateX(-50%);
   font-family: 'Orbitron', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
   color: #ffffff;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
   pointer-events: none;
-  text-shadow: 0 0 5px #000000;
+  text-shadow: 0 0 6px #000000, 0 0 3px #000000;
+  background: rgba(5, 5, 12, 0.85);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .character-node:hover .node-label {
@@ -157,11 +163,11 @@ body {
   transform: translateX(-50%);
   display: flex;
   gap: 15px;
-  background: rgba(10, 10, 25, 0.6);
+  background: rgba(6, 6, 16, 0.85);
   padding: 12px 24px;
   border-radius: 30px;
-  border: 1px solid #222244;
-  backdrop-filter: blur(8px);
+  border: 1px solid #1a1a3a;
+  backdrop-filter: blur(12px);
   z-index: 100;
 }
 
@@ -181,18 +187,9 @@ body {
 
 /* --- 📱 Universal Mobile Responsive Net --- */
 @media (max-width: 768px) {
-  .galaxy-header {
-    top: 20px;
-  }
-  
-  .title-main {
-    font-size: 1.8rem;
-  }
-  
-  .title-sub {
-    font-size: 0.9rem;
-  }
-  
+  .galaxy-header { top: 20px; }
+  .title-main { font-size: 1.8rem; }
+  .title-sub { font-size: 0.9rem; }
   .galaxy-nav {
     bottom: 15px;
     padding: 8px 16px;
@@ -200,9 +197,5 @@ body {
     width: 90%;
     justify-content: center;
   }
-  
-  .nav-btn {
-    font-size: 0.8rem;
-    padding: 4px 8px;
-  }
+  .nav-btn { font-size: 0.8rem; padding: 4px 8px; }
 }
