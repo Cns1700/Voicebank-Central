@@ -10,23 +10,23 @@ const companyData = {
   ],
   ahs: [
     { name: "Sora", color: "#60C0FF", image: "AHS/H-Sora.png" },
-    { name: "Akari", color: "#FF9999", image: "AHS/Kizuna_Akari.png" },
+    { name: "Akari", color: "#FF9999", image: "AHS/Kizuna-Akari.png" },
     { name: "Moca", color: "#FFCC33", image: "AHS/Miyamai_Moca.png" },
     { name: "miki", color: "#FF3366", image: "AHS/SF-A2-miki-V4.png" },
     { name: "Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png" },
     { name: "Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png" }
   ],
   kamitsukibaki: [
-    { name: "COKO", color: "#FF007F", image: "Kamitsukibaki/COKO.png" },
-    { name: "HARU", color: "#FF3333", image: "Kamitsukibaki/HARU.png" },
-    { name: "KAFU", color: "#00FFFF", image: "Kamitsukibaki/KAFU.png" },
-    { name: "RIME", color: "#FFAA00", image: "Kamitsukibaki/RIME.png" },
-    { name: "SEKAI", color: "#9933FF", image: "Kamitsukibaki/SEKAI.png" }
+    { name: "COKO", color: "#FF007F", image: "Kamitsubaki/COKO.png" },
+    { name: "HARU", color: "#FF3333", image: "Kamitsubaki/HARU.png" },
+    { name: "KAFU", color: "#00FFFF", image: "Kamitsubaki/KAFU.png" },
+    { name: "RIME", color: "#FFAA00", image: "Kamitsubaki/RIME.png" },
+    { name: "SEKAI", color: "#9933FF", image: "Kamitsubaki/SEKAI.png" }
   ],
   FrstPlace: [
-    { name: "HIPPI", color: "#FF44aa", image: "1stPlace/HIPPI.jpg" },
-    { name: "IA", color: "#FFCCCC", image: "1stPlace/IA.png" },
-    { name: "ONE", color: "#FF8833", image: "1stPlace/ONE.png" }
+    { name: "HIPPI", color: "#FF44aa", image: "FrstPlace/HIPPI.jpg" },
+    { name: "IA", color: "#FFCCCC", image: "FrstPlace/IA.png" },
+    { name: "ONE", color: "#FF8833", image: "FrstPlace/ONE.png" }
   ]
 };
 
@@ -38,7 +38,12 @@ const allNavLinks = document.querySelectorAll('.nav-btn, .center-hub');
 // --- 🔍 Camera Positioning Engine ---
 function moveCamera(x, y, zoom) {
   const clampedZoom = Math.min(Math.max(zoom, 0.5), 3.0);
-  canvas.style.transform = `translate(${-x}px, ${-y}px) scale(${clampedZoom})`;
+  
+  // Calculates the offset distance from the absolute 1000x1000 center of space
+  const offsetX = (1000 - x) * clampedZoom;
+  const offsetY = (1000 - y) * clampedZoom;
+  
+  canvas.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${clampedZoom})`;
 }
 
 // --- 🪐 Character Node Deployment Core ---

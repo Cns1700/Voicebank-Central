@@ -1,11 +1,12 @@
 /* --- 🪐 Deep Space Viewport & Canvas Layout --- */
+/* --- 🪐 Deep Space Viewport & Canvas Layout --- */
 body {
   margin: 0;
   padding: 0;
   background-color: #05050a;
   color: #ffffff;
   font-family: 'Segoe UI', sans-serif;
-  overflow: hidden; /* Prevents browser scrollbars from breaking immersion */
+  overflow: hidden;
 }
 
 .galaxy-viewport {
@@ -19,10 +20,11 @@ body {
   position: absolute;
   width: 2000px;
   height: 2000px;
-  top: 0;
-  left: 0;
-  transform-origin: 0 0; /* Ensures camera scaling anchors to the top-left coordinate matrix */
-  transition: transform 1000ms cubic-bezier(0.25, 1, 0.5, 1); /* Ultra smooth camera glide */
+  /* Centers the 2000x2000 canvas right in the middle of your monitor on load 🎯 */
+  top: calc(50vh - 1000px);
+  left: calc(50vw - 1000px);
+  transform-origin: center center; /* Scale transformations now anchor from the canvas center */
+  transition: transform 1000ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* --- 👑 Fixed Glowing Top Headers --- */
@@ -77,11 +79,13 @@ body {
   position: absolute;
   width: 120px;
   height: 120px;
-  transform: translate(-50%, -50%); /* Centers the hub exactly on its coordinate point */
+  /* Adjusts coordinate mapping so the actual center of the circle sits on the coordinate point */
+  transform: translate(-50%, -50%);
+  transform-style: preserve-3d;
 }
 
 .center-hub {
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -106,15 +110,16 @@ body {
   position: absolute;
   width: 80px;
   height: 80px;
-  top: 20px; /* Aligns vertically with the center of the 120px parent hub */
-  left: 20px; /* Aligns horizontally with the center of the 120px parent hub */
+  /* Positions the upper-left corner of the node perfectly inside the parent center */
+  top: 20px;
+  left: 20px;
   border-radius: 50%;
   border: 2px solid #333344;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  z-index: 20; /* Sits completely above the background dimming overlay */
-  transform: translate(0, 0) scale(0); /* Hidden inside the center hub by default */
+  z-index: 20;
+  transform: translate(0, 0) scale(0);
   transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
 }
 
