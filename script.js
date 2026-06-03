@@ -16,7 +16,7 @@ const companyData = {
     { name: "Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png" },
     { name: "Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png" }
   ],
-  kamitsukibaki: [
+  kamitsubaki: [
     { name: "COKO", color: "#FF007F", image: "Kamitsubaki/COKO.png" },
     { name: "HARU", color: "#FF3333", image: "Kamitsubaki/HARU.png" },
     { name: "KAFU", color: "#00FFFF", image: "Kamitsubaki/KAFU.png" },
