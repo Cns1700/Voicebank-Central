@@ -16,7 +16,7 @@ const companyData = {
     { name: "Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png" },
     { name: "Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png" }
   ],
-  kamitsubaki: [ // ⭐ Corrected spelling here
+  kamitsubaki: [
     { name: "COKO", color: "#FF007F", image: "Kamitsubaki/COKO.png" },
     { name: "HARU", color: "#FF3333", image: "Kamitsubaki/HARU.png" },
     { name: "KAFU", color: "#00FFFF", image: "Kamitsubaki/KAFU.png" },
@@ -39,7 +39,6 @@ const allNavLinks = document.querySelectorAll('.nav-btn, .center-hub');
 function moveCamera(x, y, zoom) {
   const clampedZoom = Math.min(Math.max(zoom, 0.5), 3.0);
   
-  // Calculate relative coordinate shifts from the absolute 1000x1000 center matrix point
   const offsetX = (1000 - x) * clampedZoom;
   const offsetY = (1000 - y) * clampedZoom;
   
@@ -51,7 +50,7 @@ function expandCharacters(container) {
   const companyId = container.id;
   const characters = companyData[companyId] || [];
   const total = characters.length;
-  const radius = 180; // 🚀 Expanded orbital ring radius
+  const radius = 180; 
 
   characters.forEach((char, index) => {
     const angle = (index * 2 * Math.PI) / total;
@@ -60,6 +59,12 @@ function expandCharacters(container) {
 
     const node = document.createElement('div');
     node.className = 'character-node';
+    
+    // 💡 Checks if image extension is a JPG format to apply the zoom override
+    if (char.image.toLowerCase().endsWith('.jpg') || char.image.toLowerCase().endsWith('.jpeg')) {
+      node.classList.add('jpg-node');
+    }
+    
     node.style.setProperty('--x', `${x}px`);
     node.style.setProperty('--y', `${y}px`);
     node.style.setProperty('--glow-color', char.color);
@@ -102,14 +107,14 @@ allNavLinks.forEach(clickableElement => {
     
     setTimeout(() => {
       if (targetId === '#home') {
-        // ⭐ Reset Camera to perfectly balance 1000x1000 baseline coordinates!
         moveCamera(1000, 1000, 1);
       } else {
         const targetCompany = document.querySelector(targetId);
         const posX = parseInt(targetCompany.style.left);
         const posY = parseInt(targetCompany.style.top);
         
-        moveCamera(posX, posY, 2.0); // Balanced zoom layer perspective focus
+        // 🚀 Lowered focus zoom from 2.0 to 1.45 to prevent title/nav overlapping!
+        moveCamera(posX, posY, 1.45); 
         
         setTimeout(() => {
           expandCharacters(targetCompany);
