@@ -1,20 +1,20 @@
 // --- 🎛️ Data Core: Company & Character Profiles ---
 const companyData = {
   cfm: [
-    { name: "Hatsune Miku", color: "#39C5BB", image: "CFM/Miku.png" },
-    { name: "Kagamine Rin", color: "#FFB11B", image: "CFM/Rin.png" },
-    { name: "Kagamine Len", color: "#FFE41B", image: "CFM/Len.png" },
-    { name: "Megurine Luka", color: "#FFB1BB", image: "CFM/Luka.png" },
-    { name: "KAITO", color: "#3366CC", image: "CFM/KAITO.png" }, // No full name change needed
-    { name: "MEIKO", color: "#CC0033", image: "CFM/MEIKO.png" }   // No full name change needed
+    { name: "Hatsune<br>Miku", color: "#39C5BB", image: "CFM/Miku.png" },
+    { name: "Kagamine<br>Rin", color: "#FFB11B", image: "CFM/Rin.png" },
+    { name: "Kagamine<br>Len", color: "#FFE41B", image: "CFM/Len.png" },
+    { name: "Megurine<br>Luka", color: "#FFB1BB", image: "CFM/Luka.png" },
+    { name: "KAITO", color: "#3366CC", image: "CFM/KAITO.png" },
+    { name: "MEIKO", color: "#CC0033", image: "CFM/MEIKO.png" }
   ],
   ahs: [
-    { name: "Hiyama Sora", color: "#60C0FF", image: "AHS/H-Sora.png" },
-    { name: "Kizuna Akari", color: "#FF9999", image: "AHS/Kizuna-Akari.png" },
-    { name: "Miyamai Moca", color: "#FFCC33", image: "AHS/Miyamai_Moca.png" },
-    { name: "SF-A2 miki V4", color: "#FF3366", image: "AHS/SF-A2-miki-V4.png" },
-    { name: "Tsurumaki Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png" },
-    { name: "Yuzuki Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png" }
+    { name: "Hiyama<br>Sora", color: "#60C0FF", image: "AHS/H-Sora.png" },
+    { name: "Kizuna<br>Akari", color: "#FF9999", image: "AHS/Kizuna-Akari.png" },
+    { name: "Miyamai<br>Moca", color: "#FFCC33", image: "AHS/Miyamai_Moca.png" },
+    { name: "SF-A2<br>miki V4", color: "#FF3366", image: "AHS/SF-A2-miki-V4.png" },
+    { name: "Tsurumaki<br>Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png" },
+    { name: "Yuzuki<br>Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png" }
   ],
   kamitsubaki: [
     { name: "COKO", color: "#FF007F", image: "Kamitsubaki/COKO.png" },
@@ -33,15 +33,14 @@ const companyData = {
 // --- 🎯 DOM Element Selectors ---
 const canvas = document.querySelector('.universe-canvas');
 const galaxyOverlay = document.querySelector('.galaxy-overlay');
+const headerElement = document.querySelector('.galaxy-header'); 
 const allNavLinks = document.querySelectorAll('.nav-btn, .center-hub');
 
 // --- 🔍 Camera Positioning Engine ---
 function moveCamera(x, y, zoom) {
   const clampedZoom = Math.min(Math.max(zoom, 0.3), 3.0);
-  
   const offsetX = (1000 - x) * clampedZoom;
   const offsetY = (1000 - y) * clampedZoom;
-  
   canvas.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${clampedZoom})`;
 }
 
@@ -51,9 +50,9 @@ function expandCharacters(container) {
   const characters = companyData[companyId] || [];
   const total = characters.length;
   
-  // 📱 Scale the orbital radius inward on mobile viewports so nodes stay inside boundaries
+  // 📱 Tightened orbital spacing to 80px on mobile viewports
   const isMobile = window.innerWidth <= 768;
-  const radius = isMobile ? 110 : 180; 
+  const radius = isMobile ? 80 : 150; 
 
   characters.forEach((char, index) => {
     const angle = (index * 2 * Math.PI) / total;
@@ -74,7 +73,7 @@ function expandCharacters(container) {
 
     const label = document.createElement('span');
     label.className = 'node-label';
-    label.textContent = char.name;
+    label.innerHTML = char.name; 
     node.appendChild(label);
 
     container.appendChild(node);
@@ -111,15 +110,17 @@ allNavLinks.forEach(clickableElement => {
       const isMobile = window.innerWidth <= 768;
 
       if (targetId === '#home') {
-        // 📲 Zooms out the birds-eye starting view on mobile screens so all hubs stay visible at once
+        if (headerElement) headerElement.classList.remove('hidden');
+        
         const baselineZoom = isMobile ? 0.45 : 1.0;
         moveCamera(1000, 1000, baselineZoom);
       } else {
+        if (headerElement) headerElement.classList.add('hidden');
+        
         const targetCompany = document.querySelector(targetId);
         const posX = parseInt(targetCompany.style.left);
         const posY = parseInt(targetCompany.style.top);
         
-        // 📲 Applies a wider zoom factor on mobile to accommodate smaller viewport constraints
         const focusZoom = isMobile ? 0.8 : 1.55; 
         moveCamera(posX, posY, focusZoom); 
         
@@ -132,7 +133,6 @@ allNavLinks.forEach(clickableElement => {
   });
 });
 
-// ⭐ Initialize the default zoom view calculation based on active screen resolution sizes
 window.addEventListener('DOMContentLoaded', () => {
   const isMobile = window.innerWidth <= 768;
   moveCamera(1000, 1000, isMobile ? 0.45 : 1.0);
