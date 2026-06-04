@@ -1,20 +1,20 @@
 // --- 🎛️ Data Core: Company & Character Profiles ---
 const companyData = {
   cfm: [
-    { name: "Miku", color: "#39C5BB", image: "CFM/Miku.png" },
-    { name: "Rin", color: "#FFB11B", image: "CFM/Rin.png" },
-    { name: "Len", color: "#FFE41B", image: "CFM/Len.png" },
-    { name: "Luka", color: "#FFB1BB", image: "CFM/Luka.png" },
-    { name: "KAITO", color: "#3366CC", image: "CFM/KAITO.png" },
-    { name: "MEIKO", color: "#CC0033", image: "CFM/MEIKO.png" }
+    { name: "Hatsune Miku", color: "#39C5BB", image: "CFM/Miku.png" },
+    { name: "Kagamine Rin", color: "#FFB11B", image: "CFM/Rin.png" },
+    { name: "Kagamine Len", color: "#FFE41B", image: "CFM/Len.png" },
+    { name: "Megurine Luka", color: "#FFB1BB", image: "CFM/Luka.png" },
+    { name: "KAITO", color: "#3366CC", image: "CFM/KAITO.png" }, // No full name change needed
+    { name: "MEIKO", color: "#CC0033", image: "CFM/MEIKO.png" }   // No full name change needed
   ],
   ahs: [
-    { name: "Sora", color: "#60C0FF", image: "AHS/H-Sora.png" },
-    { name: "Akari", color: "#FF9999", image: "AHS/Kizuna-Akari.png" },
-    { name: "Moca", color: "#FFCC33", image: "AHS/Miyamai_Moca.png" },
-    { name: "miki", color: "#FF3366", image: "AHS/SF-A2-miki-V4.png" },
-    { name: "Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png" },
-    { name: "Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png" }
+    { name: "Hiyama Sora", color: "#60C0FF", image: "AHS/H-Sora.png" },
+    { name: "Kizuna Akari", color: "#FF9999", image: "AHS/Kizuna-Akari.png" },
+    { name: "Miyamai Moca", color: "#FFCC33", image: "AHS/Miyamai_Moca.png" },
+    { name: "SF-A2 miki V4", color: "#FF3366", image: "AHS/SF-A2-miki-V4.png" },
+    { name: "Tsurumaki Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png" },
+    { name: "Yuzuki Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png" }
   ],
   kamitsubaki: [
     { name: "COKO", color: "#FF007F", image: "Kamitsubaki/COKO.png" },
@@ -37,7 +37,7 @@ const allNavLinks = document.querySelectorAll('.nav-btn, .center-hub');
 
 // --- 🔍 Camera Positioning Engine ---
 function moveCamera(x, y, zoom) {
-  const clampedZoom = Math.min(Math.max(zoom, 0.5), 3.0);
+  const clampedZoom = Math.min(Math.max(zoom, 0.3), 3.0);
   
   const offsetX = (1000 - x) * clampedZoom;
   const offsetY = (1000 - y) * clampedZoom;
@@ -50,7 +50,10 @@ function expandCharacters(container) {
   const companyId = container.id;
   const characters = companyData[companyId] || [];
   const total = characters.length;
-  const radius = 180; 
+  
+  // 📱 Scale the orbital radius inward on mobile viewports so nodes stay inside boundaries
+  const isMobile = window.innerWidth <= 768;
+  const radius = isMobile ? 110 : 180; 
 
   characters.forEach((char, index) => {
     const angle = (index * 2 * Math.PI) / total;
@@ -60,7 +63,6 @@ function expandCharacters(container) {
     const node = document.createElement('div');
     node.className = 'character-node';
     
-    // 💡 Checks if image extension is a JPG format to apply the zoom override
     if (char.image.toLowerCase().endsWith('.jpg') || char.image.toLowerCase().endsWith('.jpeg')) {
       node.classList.add('jpg-node');
     }
@@ -106,15 +108,20 @@ allNavLinks.forEach(clickableElement => {
     galaxyOverlay.classList.remove('active'); 
     
     setTimeout(() => {
+      const isMobile = window.innerWidth <= 768;
+
       if (targetId === '#home') {
-        moveCamera(1000, 1000, 1);
+        // 📲 Zooms out the birds-eye starting view on mobile screens so all hubs stay visible at once
+        const baselineZoom = isMobile ? 0.45 : 1.0;
+        moveCamera(1000, 1000, baselineZoom);
       } else {
         const targetCompany = document.querySelector(targetId);
         const posX = parseInt(targetCompany.style.left);
         const posY = parseInt(targetCompany.style.top);
         
-        // 🚀 Lowered focus zoom from 2.0 to 1.45 to prevent title/nav overlapping!
-        moveCamera(posX, posY, 1.45); 
+        // 📲 Applies a wider zoom factor on mobile to accommodate smaller viewport constraints
+        const focusZoom = isMobile ? 0.8 : 1.55; 
+        moveCamera(posX, posY, focusZoom); 
         
         setTimeout(() => {
           expandCharacters(targetCompany);
@@ -123,4 +130,10 @@ allNavLinks.forEach(clickableElement => {
       }
     }, 500);
   });
+});
+
+// ⭐ Initialize the default zoom view calculation based on active screen resolution sizes
+window.addEventListener('DOMContentLoaded', () => {
+  const isMobile = window.innerWidth <= 768;
+  moveCamera(1000, 1000, isMobile ? 0.45 : 1.0);
 });

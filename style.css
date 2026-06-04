@@ -28,7 +28,7 @@ body {
 
 /* --- 👑 Fixed Glowing Top Headers --- */
 .galaxy-header {
-  position: absolute;
+  position: fixed; /* 📌 Keeps title locked seamlessly at the top */
   top: 40px;
   left: 50%;
   transform: translateX(-50%);
@@ -79,6 +79,8 @@ body {
   height: 180px;
   transform: translate(-50%, -50%);
   transform-style: preserve-3d;
+  /* 📐 Variable fallback pathing for character positioning boxes */
+  --center-offset: 35px; 
 }
 
 .center-hub {
@@ -110,8 +112,8 @@ body {
   position: absolute;
   width: 110px; 
   height: 110px;
-  top: 35px; 
-  left: 35px;
+  top: var(--center-offset); 
+  left: var(--center-offset);
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.2);
   background-size: cover;
@@ -122,10 +124,9 @@ body {
   transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* 🚀 Special Zoom Rule for JPEGs (like HIPPI) to eliminate blank side gaps */
 .character-node.jpg-node {
   background-size: 145%;
-  background-position: center 20%; /* Safely targets upper head framing context */
+  background-position: center 20%; 
 }
 
 .character-node:hover {
@@ -192,15 +193,52 @@ body {
 
 /* --- 📱 Universal Mobile Responsive Net --- */
 @media (max-width: 768px) {
-  .galaxy-header { top: 20px; }
-  .title-main { font-size: 1.8rem; }
-  .title-sub { font-size: 0.9rem; }
+  .galaxy-header { 
+    top: 20px; 
+  }
+  .title-main { 
+    font-size: 1.6rem; 
+    letter-spacing: 2px;
+  }
+  .title-sub { 
+    font-size: 0.85rem; 
+  }
+
+  /* 📲 Resizes company nodes down to fit smaller display windows safely */
+  .galaxy-container {
+    width: 120px;
+    height: 120px;
+    /* Recalculates center tracking code: (120px hub - 75px node) / 2 = 22.5px */
+    --center-offset: 22.5px; 
+  }
+  
+  .center-hub {
+    font-size: 0.85rem;
+    border-width: 2px;
+  }
+
+  /* 📲 Resizes character portrait node circles */
+  .character-node {
+    width: 75px;
+    height: 75px;
+  }
+  
+  .node-label {
+    font-size: 0.75rem;
+    bottom: -28px;
+  }
+
   .galaxy-nav {
     bottom: 15px;
-    padding: 8px 16px;
-    gap: 8px;
-    width: 90%;
+    padding: 8px 12px;
+    gap: 5px;
+    width: 92%;
     justify-content: center;
+    border-radius: 15px;
   }
-  .nav-btn { font-size: 0.8rem; padding: 4px 8px; }
+  
+  .nav-btn { 
+    font-size: 0.72rem; 
+    padding: 4px 6px; 
+  }
 }
