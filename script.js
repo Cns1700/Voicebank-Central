@@ -50,9 +50,9 @@ function expandCharacters(container) {
   const characters = companyData[companyId] || [];
   const total = characters.length;
   
-  // 📱 Tightened orbital spacing to 80px on mobile viewports
+  // 📐 Perfectly calibrated orbital rings: 170px for desktop separation, 95px for mobile separation
   const isMobile = window.innerWidth <= 768;
-  const radius = isMobile ? 80 : 150; 
+  const radius = isMobile ? 95 : 170; 
 
   characters.forEach((char, index) => {
     const angle = (index * 2 * Math.PI) / total;

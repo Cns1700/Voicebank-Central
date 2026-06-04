@@ -215,11 +215,9 @@ body {
     font-size: 0.85rem; 
   }
 
-  /* 📲 Shrinks company nodes down and positions center point alignment */
   .galaxy-container {
     width: 100px;
     height: 100px;
-    /* (100px container - 65px character node) / 2 = 17.5px center line positioning offset */
     --center-offset: 17.5px; 
   }
   
@@ -228,7 +226,6 @@ body {
     border-width: 2px;
   }
 
-  /* 📲 Shrinks portrait nodes down to stay beautifully compact */
   .character-node {
     width: 65px;
     height: 65px;
