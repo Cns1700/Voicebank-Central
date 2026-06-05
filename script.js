@@ -56,9 +56,9 @@ function expandCharacters(container) {
   const characters = companyData[companyId] || [];
   const total = characters.length;
   
-  // 📐 Calibrated radius parameters: 170px desktop, 95px on mobile screens
+  // 📐 Perfectly balanced tracking radius matching baseline screen space
   const isMobile = window.innerWidth <= 768;
-  const radius = isMobile ? 95 : 170; 
+  const radius = isMobile ? 85 : 170; 
 
   characters.forEach((char, index) => {
     const angle = (index * 2 * Math.PI) / total;
@@ -84,7 +84,7 @@ function expandCharacters(container) {
 
     // ⚡ Wire click engine to open our glowing presentation framework
     node.addEventListener('click', (e) => {
-      e.stopPropagation(); // Prevents clicks leaking into back-layers
+      e.stopPropagation(); 
       modalCard.style.setProperty('--modal-glow', char.color);
       modalImageFrame.style.backgroundImage = `url('${char.image}')`;
       portraitModal.classList.add('open');
@@ -112,7 +112,7 @@ function closeModal() {
   portraitModal.classList.remove('open');
   setTimeout(() => {
     modalImageFrame.style.backgroundImage = '';
-  }, 400);
+  }, 300);
 }
 
 modalCloseBtn.addEventListener('click', closeModal);
@@ -148,7 +148,7 @@ allNavLinks.forEach(clickableElement => {
         const posX = parseInt(targetCompany.style.left);
         const posY = parseInt(targetCompany.style.top);
         
-        const focusZoom = isMobile ? 0.8 : 1.55; 
+        const focusZoom = isMobile ? 1.0 : 1.55; 
         moveCamera(posX, posY, focusZoom); 
         
         setTimeout(() => {

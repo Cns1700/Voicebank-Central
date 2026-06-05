@@ -123,7 +123,7 @@ body {
   transform: translate(0, 0) scale(0);
   transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.3s ease, border-color 0.3s ease;
   
-  /* ✨ Sharp Downscaling Render Filters to clear graininess */
+  /* ✨ Sharp downscaling filters to clean render artifacts */
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
 }
@@ -209,41 +209,44 @@ body {
     font-size: 0.85rem; 
   }
 
+  /* 🎯 Fixed layout values directly matching Screenshot_20260605-143445_Brave.jpg styling values */
   .galaxy-container {
-    width: 120px;
-    height: 120px;
-    --center-offset: 22.5px; 
+    width: 80px;
+    height: 80px;
+    --center-offset: 0px; 
   }
   
   .center-hub {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     border-width: 2px;
   }
 
   .character-node {
-    width: 75px;
-    height: 75px;
+    width: 55px;
+    height: 55px;
+    top: 12.5px;
+    left: 12.5px;
   }
   
   .node-label {
-    font-size: 0.75rem;
-    bottom: -28px;
-    line-height: 1.2;
+    font-size: 0.7rem;
+    bottom: -26px;
+    line-height: 1.1;
   }
 
-  /* 📲 Raised to clear Brave's lower layout tool belt */
+  /* 📲 Raised safely clear of Brave's responsive action tray */
   .galaxy-nav {
-    bottom: 75px; 
-    padding: 8px 12px;
-    gap: 5px;
+    bottom: 95px; 
+    padding: 8px 10px;
+    gap: 4px;
     width: 92%;
     justify-content: center;
-    border-radius: 15px;
+    border-radius: 12px;
   }
   
   .nav-btn { 
-    font-size: 0.72rem; 
-    padding: 4px 6px; 
+    font-size: 0.68rem; 
+    padding: 4px 5px; 
   }
 }
 
@@ -265,7 +268,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(3, 3, 10, 0.85);
+  background-color: rgba(3, 3, 10, 0.9);
   backdrop-filter: blur(8px);
   z-index: 500;
   display: flex;
@@ -273,7 +276,7 @@ body {
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .modal-overlay.open {
@@ -281,20 +284,21 @@ body {
   pointer-events: auto;
 }
 
+/* 📱 Tall Rounded Rectangle Portrait Orientation (Glows, No Hover Effect) */
 .modal-card {
   position: relative;
-  width: 85vw;
-  max-width: 420px;
-  height: 75vh;
-  max-height: 640px;
-  background-color: #080812;
-  border-radius: 24px;
-  border: 2px solid var(--modal-glow, #00ffcc);
-  box-shadow: 0 0 35px var(--modal-glow, rgba(0, 255, 204, 0.4));
-  padding: 20px;
+  width: 80vw;
+  max-width: 360px;
+  height: 70vh;
+  max-height: 540px;
+  background-color: #06060e;
+  border-radius: 20px;
+  border: 3px solid var(--modal-glow, #00ffcc);
+  box-shadow: 0 0 30px var(--modal-glow, rgba(0, 255, 204, 0.5));
+  padding: 15px;
   box-sizing: border-box;
-  transform: scale(0.85);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: scale(0.9);
+  transition: transform 0.3s ease-out;
 }
 
 .modal-overlay.open .modal-card {
@@ -303,15 +307,15 @@ body {
 
 .modal-close-btn {
   position: absolute;
-  top: 15px;
-  right: 20px;
+  top: 10px;
+  right: 15px;
   background: none;
   border: none;
   color: #ffffff;
-  font-size: 2rem;
+  font-size: 2.2rem;
   cursor: pointer;
   z-index: 510;
-  opacity: 0.7;
+  opacity: 0.6;
   transition: opacity 0.2s;
 }
 
