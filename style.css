@@ -6,8 +6,6 @@ body {
   color: #ffffff;
   font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
 }
 
 .galaxy-viewport {
@@ -15,7 +13,6 @@ body {
   width: 100vw;
   height: 100vh;
   background-image: radial-gradient(circle at center, #0a0a20 0%, #020205 100%);
-  overflow: hidden;
 }
 
 .universe-canvas {
@@ -33,15 +30,11 @@ body {
 .galaxy-header {
   position: fixed; 
   top: 40px;
-  left: 0;
-  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
   z-index: 50;
   pointer-events: none; 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .title-main {
@@ -58,7 +51,6 @@ body {
   font-size: 1.1rem;
   letter-spacing: 2px;
   color: #a0f0ed;
-  margin: 0;
   text-shadow: 0 0 8px rgba(0, 255, 204, 0.5), 0 0 15px rgba(0, 255, 204, 0.2);
 }
 
@@ -91,6 +83,7 @@ body {
 }
 
 .center-hub {
+  position: relative;
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -105,10 +98,6 @@ body {
   z-index: 12;
   box-shadow: 0 0 20px rgba(0, 255, 204, 0.35);
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .center-hub:hover {
@@ -126,16 +115,21 @@ body {
   left: var(--center-offset);
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  background-size: cover;
+  background-size: contain; 
   background-position: top center; 
   background-repeat: no-repeat;
+  background-color: rgba(10, 10, 25, 0.6);
   z-index: 25; 
   transform: translate(0, 0) scale(0);
   transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  
+  /* ✨ Sharp Downscaling Render Filters to clear graininess */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .character-node.jpg-node {
-  background-size: 145%;
+  background-size: cover;
   background-position: center 20%; 
 }
 
@@ -216,42 +210,39 @@ body {
   }
 
   .galaxy-container {
-    width: 100px;
-    height: 100px;
-    --center-offset: 17.5px; 
+    width: 120px;
+    height: 120px;
+    --center-offset: 22.5px; 
   }
   
   .center-hub {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     border-width: 2px;
   }
 
   .character-node {
-    width: 65px;
-    height: 65px;
+    width: 75px;
+    height: 75px;
   }
   
   .node-label {
-    font-size: 0.7rem;
-    bottom: -26px;
-    line-height: 1.1;
+    font-size: 0.75rem;
+    bottom: -28px;
+    line-height: 1.2;
   }
 
-/* 📲 Explicitly centers the navigation dock while clearing the browser menu bar */
+  /* 📲 Raised to clear Brave's lower layout tool belt */
   .galaxy-nav {
-    bottom: 55px; /* ⬆️ Raised to prevent Brave browser overlaps */
-    left: 50%;
-    transform: translateX(-50%); /* Pinpoints exact viewport horizontal center */
-    width: 90%;
-    max-width: 400px;
+    bottom: 75px; 
     padding: 8px 12px;
     gap: 5px;
+    width: 92%;
     justify-content: center;
     border-radius: 15px;
   }
   
   .nav-btn { 
-    font-size: 0.7rem; 
+    font-size: 0.72rem; 
     padding: 4px 6px; 
   }
 }
@@ -263,6 +254,76 @@ body {
 
 .galaxy-header.hidden {
   opacity: 0;
-  transform: translateY(-20px); 
+  transform: translate(-50%, -20px); 
   pointer-events: none; 
+}
+
+/* --- 🖼️ Full-View Modal Portal Framework --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(3, 3, 10, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  position: relative;
+  width: 85vw;
+  max-width: 420px;
+  height: 75vh;
+  max-height: 640px;
+  background-color: #080812;
+  border-radius: 24px;
+  border: 2px solid var(--modal-glow, #00ffcc);
+  box-shadow: 0 0 35px var(--modal-glow, rgba(0, 255, 204, 0.4));
+  padding: 20px;
+  box-sizing: border-box;
+  transform: scale(0.85);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.open .modal-card {
+  transform: scale(1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 510;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.modal-close-btn:hover {
+  opacity: 1;
+}
+
+.modal-image-frame {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
 }

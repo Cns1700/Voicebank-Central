@@ -36,6 +36,12 @@ const galaxyOverlay = document.querySelector('.galaxy-overlay');
 const headerElement = document.querySelector('.galaxy-header'); 
 const allNavLinks = document.querySelectorAll('.nav-btn, .center-hub');
 
+// 🖼️ Modal UI View Selectors
+const portraitModal = document.getElementById('portrait-modal');
+const modalCard = document.querySelector('.modal-card');
+const modalImageFrame = document.querySelector('.modal-image-frame');
+const modalCloseBtn = document.querySelector('.modal-close-btn');
+
 // --- 🔍 Camera Positioning Engine ---
 function moveCamera(x, y, zoom) {
   const clampedZoom = Math.min(Math.max(zoom, 0.3), 3.0);
@@ -50,7 +56,7 @@ function expandCharacters(container) {
   const characters = companyData[companyId] || [];
   const total = characters.length;
   
-  // 📐 Perfectly calibrated orbital rings: 170px for desktop separation, 95px for mobile separation
+  // 📐 Calibrated radius parameters: 170px desktop, 95px on mobile screens
   const isMobile = window.innerWidth <= 768;
   const radius = isMobile ? 95 : 170; 
 
@@ -76,6 +82,14 @@ function expandCharacters(container) {
     label.innerHTML = char.name; 
     node.appendChild(label);
 
+    // ⚡ Wire click engine to open our glowing presentation framework
+    node.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevents clicks leaking into back-layers
+      modalCard.style.setProperty('--modal-glow', char.color);
+      modalImageFrame.style.backgroundImage = `url('${char.image}')`;
+      portraitModal.classList.add('open');
+    });
+
     container.appendChild(node);
 
     requestAnimationFrame(() => {
@@ -92,6 +106,19 @@ function retractAllCharacters() {
     setTimeout(() => node.remove(), 500);
   });
 }
+
+// --- 🚪 Modal Close Mechanics ---
+function closeModal() {
+  portraitModal.classList.remove('open');
+  setTimeout(() => {
+    modalImageFrame.style.backgroundImage = '';
+  }, 400);
+}
+
+modalCloseBtn.addEventListener('click', closeModal);
+portraitModal.addEventListener('click', (e) => {
+  if (e.target === portraitModal) closeModal();
+});
 
 // --- 🕹️ Master Navigation Event Loop ---
 allNavLinks.forEach(clickableElement => {
