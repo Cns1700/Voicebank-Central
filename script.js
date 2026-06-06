@@ -1,32 +1,33 @@
 // --- 🎛️ Data Core: Company & Character Profiles ---
+// 🗺️ Customize alignment using 'alignX', 'alignY', and 'scale' values as needed!
 const companyData = {
   cfm: [
-    { name: "Hatsune<br>Miku", color: "#39C5BB", image: "CFM/Miku.png" },
-    { name: "Kagamine<br>Rin", color: "#FFB11B", image: "CFM/Rin.png" },
-    { name: "Kagamine<br>Len", color: "#FFE41B", image: "CFM/Len.png" },
-    { name: "Megurine<br>Luka", color: "#FFB1BB", image: "CFM/Luka.png" },
-    { name: "KAITO", color: "#3366CC", image: "CFM/KAITO.png" },
-    { name: "MEIKO", color: "#CC0033", image: "CFM/MEIKO.png" }
+    { name: "Hatsune<br>Miku", color: "#39C5BB", image: "CFM/Miku.png", alignX: "center", alignY: "5%", scale: "210%"},
+    { name: "Kagamine<br>Rin", color: "#FFB11B", image: "CFM/Rin.png", alignX: "40%", alignY: "9%", scale: "210%"},
+    { name: "Kagamine<br>Len", color: "#FFE41B", image: "CFM/Len.png", alignX: "55%", alignY: "9%", scale: "210%"},
+    { name: "Megurine<br>Luka", color: "#FFB1BB", image: "CFM/Luka.png", alignX: "center", alignY: "6%", scale: "210%"},
+    { name: "KAITO", color: "#3366CC", image: "CFM/KAITO.png", alignX: "20%", alignY: "5%", scale: "230%"},
+    { name: "MEIKO", color: "#CC0033", image: "CFM/MEIKO.png", alignX: "60%", alignY: "3%", scale: "230%"}
   ],
   ahs: [
-    { name: "Hiyama<br>Sora", color: "#60C0FF", image: "AHS/H-Sora.png" },
-    { name: "Kizuna<br>Akari", color: "#FF9999", image: "AHS/Kizuna-Akari.png" },
-    { name: "Miyamai<br>Moca", color: "#FFCC33", image: "AHS/Miyamai_Moca.png" },
-    { name: "SF-A2<br>miki V4", color: "#FF3366", image: "AHS/SF-A2-miki-V4.png" },
-    { name: "Tsurumaki<br>Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png" },
-    { name: "Yuzuki<br>Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png" }
+    { name: "Hiyama<br>Sora", color: "#60C0FF", image: "AHS/H-Sora.png", alignX: "45%", alignY: "3%", scale: "250%"},
+    { name: "Kizuna<br>Akari", color: "#FF9999", image: "AHS/Kizuna-Akari.png", alignX: "25%", alignY: "1%", scale: "250%"},
+    { name: "Miyamai<br>Moca", color: "#FFCC33", image: "AHS/Miyamai_Moca.png", alignX: "55%", alignY: "1%", scale: "220%"},
+    { name: "SF-A2<br>miki V4", color: "#FF3366", image: "AHS/SF-A2-miki-V4.png", alignX: "35%", alignY: "20%", scale: "230%"},
+    { name: "Tsurumaki<br>Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.png", alignX: "65%", alignY: "7%", scale: "250%"},
+    { name: "Yuzuki<br>Yukari", color: "#A47CD6", image: "AHS/Yuzuki_Yukari.png", alignX: "55%", alignY: "1%", scale: "250%"}
   ],
   kamitsubaki: [
-    { name: "COKO", color: "#FF007F", image: "Kamitsubaki/COKO.png" },
-    { name: "HARU", color: "#FF3333", image: "Kamitsubaki/HARU.png" },
-    { name: "KAFU", color: "#00FFFF", image: "Kamitsubaki/KAFU.png" },
-    { name: "RIME", color: "#FFAA00", image: "Kamitsubaki/RIME.png" },
-    { name: "SEKAI", color: "#9933FF", image: "Kamitsubaki/SEKAI.png" }
+    { name: "COKO", color: "#FF007F", image: "Kamitsubaki/COKO.png", alignX: "32%", alignY: "1%", scale: "250%"},
+    { name: "HARU", color: "#FF3333", image: "Kamitsubaki/HARU.png", alignX: "55%", alignY: "1%", scale: "200%"},
+    { name: "KAFU", color: "#00FFFF", image: "Kamitsubaki/KAFU.png", alignX: "52%", alignY: "3%", scale: "330%"},
+    { name: "RIME", color: "#FFAA00", image: "Kamitsubaki/RIME.png", alignX: "40%", alignY: "1%", scale: "180%"},
+    { name: "SEKAI", color: "#9933FF", image: "Kamitsubaki/SEKAI.png", alignX: "45%", alignY: "0%", scale: "220%"}
   ],
   FrstPlace: [
-    { name: "HIPPI", color: "#FF44aa", image: "FrstPlace/HIPPI.jpg" },
-    { name: "IA", color: "#FFCCCC", image: "FrstPlace/IA.png" },
-    { name: "ONE", color: "#FF8833", image: "FrstPlace/ONE.png" }
+    { name: "HIPPI", color: "#FF44aa", image: "FrstPlace/HIPPI.jpg", alignX: "55%", alignY: "9.8%", scale: "320%"},
+    { name: "IA", color: "#FFCCCC", image: "FrstPlace/IA.png", alignX: "68%", alignY: "8%", scale: "320%"},
+    { name: "ONE", color: "#FF8833", image: "FrstPlace/ONE.png", alignX: "52%", alignY: "1%", scale: "300%"}
   ]
 };
 
@@ -56,9 +57,8 @@ function expandCharacters(container) {
   const characters = companyData[companyId] || [];
   const total = characters.length;
   
-  // 📐 Perfectly balanced tracking radius matching baseline screen space
   const isMobile = window.innerWidth <= 768;
-  const radius = isMobile ? 85 : 170; 
+  const radius = isMobile ? 80 : 170; 
 
   characters.forEach((char, index) => {
     const angle = (index * 2 * Math.PI) / total;
@@ -68,21 +68,22 @@ function expandCharacters(container) {
     const node = document.createElement('div');
     node.className = 'character-node';
     
-    if (char.image.toLowerCase().endsWith('.jpg') || char.image.toLowerCase().endsWith('.jpeg')) {
-      node.classList.add('jpg-node');
-    }
-    
     node.style.setProperty('--x', `${x}px`);
     node.style.setProperty('--y', `${y}px`);
     node.style.setProperty('--glow-color', char.color);
     node.style.backgroundImage = `url('${char.image}')`;
+
+    // ⚡ Dynamically assigns unique layout alignment custom variables
+    node.style.setProperty('--char-x', char.alignX || 'center');
+    node.style.setProperty('--char-y', char.alignY || '20%');
+    node.style.setProperty('--char-scale', char.scale || '145%');
 
     const label = document.createElement('span');
     label.className = 'node-label';
     label.innerHTML = char.name; 
     node.appendChild(label);
 
-    // ⚡ Wire click engine to open our glowing presentation framework
+    // ⚡ Click opens full artwork view
     node.addEventListener('click', (e) => {
       e.stopPropagation(); 
       modalCard.style.setProperty('--modal-glow', char.color);
@@ -148,7 +149,7 @@ allNavLinks.forEach(clickableElement => {
         const posX = parseInt(targetCompany.style.left);
         const posY = parseInt(targetCompany.style.top);
         
-        const focusZoom = isMobile ? 1.0 : 1.55; 
+        const focusZoom = isMobile ? 0.8 : 1.55; 
         moveCamera(posX, posY, focusZoom); 
         
         setTimeout(() => {
