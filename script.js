@@ -58,7 +58,7 @@ function expandCharacters(container) {
   const total = characters.length;
   
   const isMobile = window.innerWidth <= 768;
-  const radius = isMobile ? 80 : 170; 
+  const radius = isMobile ? 125 : 170; 
 
   characters.forEach((char, index) => {
     const angle = (index * 2 * Math.PI) / total;
