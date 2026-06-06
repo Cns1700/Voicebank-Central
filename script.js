@@ -28,6 +28,17 @@ const companyData = {
     { name: "HIPPI", color: "#FF44aa", image: "FrstPlace/HIPPI.jpg", alignX: "55%", alignY: "9.8%", scale: "320%"},
     { name: "IA", color: "#FFCCCC", image: "FrstPlace/IA.png", alignX: "68%", alignY: "8%", scale: "320%"},
     { name: "ONE", color: "#FF8833", image: "FrstPlace/ONE.png", alignX: "52%", alignY: "1%", scale: "300%"}
+  ],
+  twindrill: [
+    { name: "Kasane<br>Teto", color: "#FF4060", image: "Twindrill/Teto.png", alignX: "53%", alignY: "5%", scale: "235%" }
+  ],
+  internet: [
+    { name: "GUMI", color: "#33CC33", image: "Internet/Gumi.png", alignX: "25%", alignY: "3%", scale: "225%"},
+    { name: "Lily", color: "#FFEE00", image: "Internet/Lily.png", alignX: "35%", alignY: "5%", scale: "255%"},
+    { name: "Rosa", color: "#FF66CC", image: "Internet/Rosa.png", alignX: "35%", alignY: "3%", scale: "255%"},
+    { name: "galaco", color: "#9933FF", image: "Internet/Galaco.png", alignX: "55%", alignY: "3%", scale: "245%"},
+    { name: "CUL", color: "#FF0033", image: "Internet/Cul.png", alignX: "59%", alignY: "1%", scale: "245%"},
+    { name: "Otomachi<br>Una", color: "#0099FF", image: "Internet/Una.png", alignX: "59%", alignY: "3%", scale: "245%"}
   ]
 };
 
