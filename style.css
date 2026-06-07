@@ -14,7 +14,7 @@ body {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background-image: radial-gradient(circle at center, #0a0a20 0%, #020205 100%);
+  background: transparent; /* Allow the gradient scroller below to show */
   overflow: hidden;
 }
 
@@ -69,7 +69,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(3, 3, 8, 0.82); 
+  background-color: transparent; 
   opacity: 0;
   pointer-events: none;
   transition: opacity 500ms ease-in-out;
@@ -480,4 +480,67 @@ body {
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
+}
+
+/* --- 🪐 Ambient Scrolling Canvas --- */
+.gradient-scroller {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  background: radial-gradient(circle at center, #0a0a20 0%, #020205 100%);
+  background-size: 300% 300%;
+  transition: background 1.5s ease-in-out;
+  animation: slowScrollBackground 20s linear infinite;
+}
+
+@keyframes slowScrollBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🪐 Dynamic Color Themes for the 3-Gradient Flow */
+.bg-cfm { background: linear-gradient(135deg, #021114, #062b2e, #010a0c); background-size: 300% 300%; }
+.bg-ahs { background: linear-gradient(135deg, #09040d, #1a0b26, #040206); background-size: 300% 300%; }
+.bg-kamitsubaki { background: linear-gradient(135deg, #021414, #052c33, #010b0d); background-size: 300% 300%; }
+.bg-frstplace { background: linear-gradient(135deg, #140804, #2e140b, #0c0402); background-size: 300% 300%; }
+.bg-twindrill { background: linear-gradient(135deg, #140408, #330b18, #0c0205); background-size: 300% 300%; }
+.bg-internet { background: linear-gradient(135deg, #041406, #0b3311, #020c03); background-size: 300% 300%; }
+
+/* --- ✨ Floating Shapes with Breathing Glow --- */
+.particle-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.floating-shape {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: floatUp 12s linear infinite, driftHorizontal 6s ease-in-out infinite, neonPulse 4s ease-in-out infinite;
+}
+
+@keyframes floatUp {
+  0% { top: 105vh; }
+  100% { top: -10vh; }
+}
+
+@keyframes driftHorizontal {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(40px); }
+}
+
+@keyframes neonPulse {
+  0%, 100% { opacity: 0.15; filter: drop-shadow(0 0 4px var(--shape-glow)) blur(1px); }
+  50% { opacity: 0.55; filter: drop-shadow(0 0 16px var(--shape-glow)) blur(2px); }
 }

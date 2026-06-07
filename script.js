@@ -132,6 +132,54 @@ portraitModal.addEventListener('click', (e) => {
   if (e.target === portraitModal) closeModal();
 });
 
+// --- 🌌 Dynamic Theme & Glowing Shape Generators ---
+function spawnCompanyParticles(companyId) {
+  const canvasLayer = document.getElementById('particle-canvas');
+  if (!canvasLayer) return;
+  
+  canvasLayer.innerHTML = ''; 
+  const dataKey = companyId === 'FrstPlace' ? 'FrstPlace' : companyId.toLowerCase();
+  const characters = companyData[dataKey] || [];
+  if (characters.length === 0) return;
+
+  const totalShapes = 15;
+  for (let i = 0; i < totalShapes; i++) {
+    const randomChara = characters[i % characters.length];
+    const themeColor = randomChara.color;
+
+    const shape = document.createElement('div');
+    shape.classList.add('floating-shape');
+    
+    shape.style.setProperty('--shape-glow', themeColor);
+    shape.style.backgroundColor = themeColor;
+    
+    const size = Math.random() * 15 + 8;
+    shape.style.width = `${size}px`;
+    shape.style.height = `${size}px`;
+    shape.style.left = `${Math.random() * 100}vw`;
+    
+    shape.style.animationDuration = `${Math.random() * 6 + 10}s, ${Math.random() * 2 + 4}s, ${Math.random() * 2 + 3}s`;
+    shape.style.animationDelay = `${Math.random() * -12}s, ${Math.random() * -6}s, ${Math.random() * -4}s`;
+    
+    canvasLayer.appendChild(shape);
+  }
+}
+
+function updateScrollerBackground(companyId) {
+  const bgLayer = document.getElementById('gradient-bg-layer');
+  if (!bgLayer) return;
+  
+  bgLayer.className = 'gradient-scroller'; 
+  
+  if (companyId && companyId !== 'home') {
+    bgLayer.classList.add(`bg-${companyId.toLowerCase()}`);
+    spawnCompanyParticles(companyId);
+  } else {
+    const canvasLayer = document.getElementById('particle-canvas');
+    if (canvasLayer) canvasLayer.innerHTML = ''; 
+  }
+}
+
 // --- 🕹️ Master Navigation Event Loop ---
 allNavLinks.forEach(clickableElement => {
   clickableElement.addEventListener('click', (e) => {
@@ -154,11 +202,13 @@ allNavLinks.forEach(clickableElement => {
 
       if (targetId === '#home') {
         if (headerElement) headerElement.classList.remove('hidden');
+        updateScrollerBackground('home');
         
         const baselineZoom = isMobile ? 0.45 : 1.0;
         moveCamera(1000, 1000, baselineZoom);
       } else {
         if (headerElement) headerElement.classList.add('hidden');
+        updateScrollerBackground(targetId.replace('#', ''));
         
         const targetCompany = document.querySelector(targetId);
         const posX = parseInt(targetCompany.style.left);
@@ -179,4 +229,5 @@ allNavLinks.forEach(clickableElement => {
 window.addEventListener('DOMContentLoaded', () => {
   const isMobile = window.innerWidth <= 768;
   moveCamera(1000, 1000, isMobile ? 0.45 : 1.0);
+  updateScrollerBackground('home');
 });
