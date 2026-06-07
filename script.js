@@ -46,7 +46,7 @@ const companyData = {
 const canvas = document.querySelector('.universe-canvas');
 const galaxyOverlay = document.querySelector('.galaxy-overlay');
 const headerElement = document.querySelector('.galaxy-header'); 
-const allNavLinks = document.querySelectorAll('.nav-btn, .center-hub');
+const allNavLinks = document.querySelectorAll('.nav-btn, [class*="center-hub"]');
 
 // 🖼️ Modal UI View Selectors
 const portraitModal = document.getElementById('portrait-modal');
@@ -138,7 +138,11 @@ allNavLinks.forEach(clickableElement => {
     e.preventDefault();
     
     let targetId = clickableElement.getAttribute('href');
-    if (!targetId && clickableElement.classList.contains('center-hub')) {
+    
+    // 🎯 Dynamic fix: Match any button class starting with "center-hub"
+    const isHubButton = Array.from(clickableElement.classList).some(className => className.startsWith('center-hub'));
+    
+    if (!targetId && isHubButton) {
       targetId = "#" + clickableElement.closest('.galaxy-container').id;
     }
     
@@ -166,9 +170,9 @@ allNavLinks.forEach(clickableElement => {
         setTimeout(() => {
           expandCharacters(targetCompany);
           galaxyOverlay.classList.add('active');
-        }, 1000);
+        }, 900);
       }
-    }, 500);
+    }, 100);
   });
 });
 

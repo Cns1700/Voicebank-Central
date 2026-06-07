@@ -90,11 +90,12 @@ body {
   --center-offset: 35px; 
 }
 
-.center-hub {
+/* --- Individual Company Effects*/
+.center-hub-cfm {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: #0b0b18;
+  background: #33537c;
   border: 3px solid #00ffcc;
   color: #ffffff;
   font-family: 'Orbitron', sans-serif;
@@ -111,10 +112,145 @@ body {
   justify-content: center;
 }
 
-.center-hub:hover {
+.center-hub-cfm:hover {
   transform: scale(1.05);
   border-color: #a0f0ed;
   box-shadow: 0 0 30px rgba(0, 255, 204, 0.75);
+}
+
+.center-hub-ahs {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #0c192c;
+  border: 3px solid #9a8bc5;
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 12;
+  box-shadow: 0 0 20px rgba(203, 206, 205, 0.35);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-hub-ahs:hover {
+  transform: scale(1.05);
+  border-color: #b64523;
+  box-shadow: 0 0 30px rgba(199, 73, 15, 0.75);
+}
+
+.center-hub-kamitsubaki {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #666666;
+  border: 3px solid #abb2b8;
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 12;
+  box-shadow: 0 0 20px rgba(155, 154, 154, 0.35);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-hub-kamitsubaki:hover {
+  transform: scale(1.05);
+  border-color: #9a40ce;
+  box-shadow: 0 0 30px rgba(130, 31, 223, 0.75);
+}
+
+.center-hub-frstplace {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #a3225e;
+  border: 3px solid #9e1697;
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 12;
+  box-shadow: 0 0 20px rgba(255, 0, 234, 0.35);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-hub-frstplace:hover {
+  transform: scale(1.05);
+  border-color: #ddb5e6;
+  box-shadow: 0 0 30px rgba(204, 77, 147, 0.75);
+}
+
+.center-hub-twindrill {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #690303;
+  border: 3px solid #ff0077;
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 12;
+  box-shadow: 0 0 20px rgba(241, 87, 87, 0.35);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-hub-twindrill:hover {
+  transform: scale(1.05);
+  border-color: #f0a0a0;
+  box-shadow: 0 0 30px rgba(255, 0, 34, 0.75);
+}
+
+.center-hub-internet {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #0a0369;
+  border: 3px solid #5194f8;
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 12;
+  box-shadow: 0 0 20px rgba(147, 129, 247, 0.35);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-hub-internet:hover {
+  transform: scale(1.05);
+  border-color: #a0c0f0;
+  box-shadow: 0 0 30px rgba(0, 119, 255, 0.75);
 }
 
 /* --- 🖼️ Character Nodes & Hover Labels --- */
@@ -218,8 +354,14 @@ body {
     height: 120px;
     --center-offset: 22.5px; 
   }
-  
-  .center-hub {
+
+/* 📱 Mobile Sizing for All Company Hub Buttons */
+  .center-hub-cfm,
+  .center-hub-ahs,
+  .center-hub-kamitsubaki,
+  .center-hub-frstplace,
+  .center-hub-twindrill,
+  .center-hub-internet {
     font-size: 0.85rem;
     border-width: 2px;
   }
@@ -235,22 +377,28 @@ body {
     line-height: 1.2;
   }
 
+  /* --- 🎛️ Updated Mobile Navigation Dock --- */
   .galaxy-nav {
     position: absolute;
     bottom: 15px;
-    left: 5%;
+    left: 50%; /* 🎯 Re-center using absolute transformation anchors */
+    transform: translateX(-50%);
     width: 90%;
-    max-width: 400px;
-    padding: 8px 0;
-    gap: 5px;
+    max-width: 480px; /* 📐 Boost maximum boundary space to fit the new text links */
+    padding: 10px;
+    gap: 6px 10px; /* 🧬 Add a vertical gap fallback if items wrap to a second line */
+    display: flex;
+    flex-wrap: wrap; /* 🔄 Enable fluid item wrapping instead of breaking layout boxes */
     justify-content: center;
+    align-items: center;
     border-radius: 15px;
-    transform: none;
+    box-sizing: border-box;
   }
   
   .nav-btn { 
-    font-size: 0.7rem; 
+    font-size: 0.75rem; /* ✏️ Slightly optimize font footprint for better text density */
     padding: 4px 6px; 
+    white-space: nowrap; /* 🚫 Prevent individual company labels from fracturing text into raw vertical single characters */
   }
 }
 
