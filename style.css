@@ -15,6 +15,7 @@
   --font-body: 'Segoe UI', system-ui, sans-serif;
   --transition-smooth: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   --touch-min: 44px; /* Recommended minimum touch target */
+  --circuit-glow: rgba(0, 255, 204, 0.55);
 }
 
 /* ---------- Reset & Base ---------- */
@@ -357,7 +358,8 @@ body {
   background: rgba(0, 255, 204, 0.15);
 }
 
-/* ---------- Portrait Modal ---------- */
+/* ---------- Portrait Modal (FIXED) ---------- */
+/* Native <dialog> is hidden by default. Only show when it has the open attribute. */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -367,13 +369,17 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 500;
-  display: flex;
+  display: none; /* CRITICAL: keep closed until showModal() */
   align-items: center;
   justify-content: center;
   padding: 16px;
   border: none;
   max-width: none;
   max-height: none;
+}
+
+.modal-overlay[open] {
+  display: flex;
 }
 
 .modal-overlay::backdrop {
@@ -502,52 +508,56 @@ body {
   -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 75%);
 }
 
-/* Animated light packets that travel along the grid */
+/* Animated light packets that travel along the grid (horizontal + vertical) */
 .circuit-layer::before,
 .circuit-layer::after {
   content: "";
   position: absolute;
   inset: 0;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Horizontal flowing lights */
+.circuit-layer::before {
   background-image:
     linear-gradient(90deg,
       transparent 0%,
       transparent 40%,
-      rgba(0, 255, 204, 0.55) 50%,
+      var(--circuit-glow) 50%,
       transparent 60%,
       transparent 100%);
   background-size: 220% 2px;
   background-repeat: no-repeat;
-  opacity: 0.7;
-  animation: circuitFlow 9s linear infinite;
-}
-
-.circuit-layer::before {
   background-position: 0 28%;
-  animation-duration: 11s;
+  animation: circuitFlowX 11s linear infinite;
   animation-delay: -2s;
 }
 
+/* Vertical flowing lights */
 .circuit-layer::after {
-  background-position: 0 72%;
   background-image:
-    linear-gradient(90deg,
+    linear-gradient(180deg,
       transparent 0%,
       transparent 35%,
       rgba(0, 220, 255, 0.5) 48%,
       transparent 62%,
       transparent 100%);
-  animation-duration: 14s;
+  background-size: 2px 220%;
+  background-repeat: no-repeat;
+  background-position: 35% 0;
+  animation: circuitFlowY 14s linear infinite;
   animation-delay: -5s;
 }
 
-@keyframes circuitFlow {
+@keyframes circuitFlowX {
   0%   { background-position-x: -40%; }
   100% { background-position-x: 140%; }
 }
 
-/* Extra vertical light streaks */
-.circuit-layer {
-  /* keep the base pattern */
+@keyframes circuitFlowY {
+  0%   { background-position-y: -40%; }
+  100% { background-position-y: 140%; }
 }
 
 /* ---------- Floating Particles ---------- */
@@ -621,7 +631,7 @@ body {
     padding: 2px 6px;
   }
 
-  /* Much larger, easier-to-tap navigation on mobile */
+  /* Improved mobile navigation: CSS Grid for consistent large touch targets */
   .galaxy-nav {
     bottom: max(12px, env(safe-area-inset-bottom));
     width: calc(100% - 16px);
@@ -629,17 +639,18 @@ body {
     padding: 12px 10px;
     gap: 8px;
     border-radius: 18px;
-    /* Allow two rows comfortably */
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    justify-items: center;
   }
 
   .nav-btn {
     font-size: 0.78rem;
-    padding: 12px 14px;          /* bigger hit area */
+    padding: 12px 10px;
     min-height: 48px;
-    min-width: 72px;
-    flex: 1 1 auto;
-    max-width: 140px;
+    min-width: 0; /* let grid control width */
+    width: 100%;
+    max-width: none;
   }
 }
 
@@ -647,12 +658,16 @@ body {
 @media (max-width: 380px) {
   .nav-btn {
     font-size: 0.72rem;
-    padding: 11px 10px;
-    min-width: 64px;
+    padding: 11px 8px;
+    min-height: 46px;
   }
 
   .title-main {
     letter-spacing: 0.08em;
+  }
+
+  .galaxy-nav {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
   }
 }
 
@@ -669,10 +684,13 @@ body {
   }
   .galaxy-nav {
     padding: 8px 12px;
+    display: flex; /* back to flex in landscape for compactness */
+    flex-wrap: wrap;
   }
   .nav-btn {
     padding: 8px 12px;
     min-height: 40px;
+    width: auto;
   }
 }
 
