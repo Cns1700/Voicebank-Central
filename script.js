@@ -59,10 +59,14 @@ const portraitModal   = document.getElementById('portrait-modal');
 const modalCard       = portraitModal.querySelector('.modal-card');
 const modalImageFrame = portraitModal.querySelector('.modal-image-frame');
 const modalCloseBtn   = portraitModal.querySelector('.modal-close-btn');
+const circuitLayer    = document.getElementById('circuit-bg-layer');
 
 // All interactive elements that can trigger navigation
 const navButtons  = document.querySelectorAll('.nav-btn');
 const hubButtons  = document.querySelectorAll('.center-hub');
+
+// Track last focused element for accessibility (return focus after modal closes)
+let lastFocusedElement = null;
 
 // ---------------------------------------------------------------------------
 // Camera / Zoom engine
@@ -114,7 +118,7 @@ function expandCharacters(container) {
 
     node.addEventListener('click', (e) => {
       e.stopPropagation();
-      openPortrait(char);
+      openPortrait(char, node);
     });
 
     container.appendChild(node);
@@ -141,19 +145,34 @@ function retractAllCharacters() {
 }
 
 // ---------------------------------------------------------------------------
-// Portrait modal
+// Portrait modal (with proper focus management)
 // ---------------------------------------------------------------------------
-function openPortrait(char) {
+function openPortrait(char, triggerElement) {
+  lastFocusedElement = triggerElement || document.activeElement;
+
   modalCard.style.setProperty('--modal-glow', char.color);
   modalImageFrame.style.backgroundImage = `url('${char.image}')`;
   modalImageFrame.setAttribute('aria-label', `Full artwork of ${char.name.replace(/<br>/g, ' ')}`);
+
   portraitModal.showModal();
+
+  // Move focus into the modal for keyboard / screen-reader users
+  requestAnimationFrame(() => {
+    modalCloseBtn.focus();
+  });
 }
 
 function closePortrait() {
   if (portraitModal.open) {
     portraitModal.close();
   }
+
+  // Return focus to the element that opened the modal
+  if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+    lastFocusedElement.focus();
+  }
+  lastFocusedElement = null;
+
   // Clear image after close animation
   setTimeout(() => {
     modalImageFrame.style.backgroundImage = '';
@@ -174,7 +193,7 @@ portraitModal.addEventListener('cancel', (e) => {
 });
 
 // ---------------------------------------------------------------------------
-// Theme & particle system
+// Theme & particle system + circuit tinting
 // ---------------------------------------------------------------------------
 function spawnCompanyParticles(companyId) {
   const layer = document.getElementById('particle-canvas');
@@ -220,9 +239,25 @@ function updateScrollerBackground(companyId) {
   // Reset classes
   bgLayer.className = 'gradient-scroller';
 
+  // Reset circuit color to default cyan
+  if (circuitLayer) {
+    circuitLayer.style.setProperty('--circuit-glow', 'rgba(0, 255, 204, 0.55)');
+  }
+
   if (companyId && companyId !== 'home') {
     bgLayer.classList.add(`bg-${companyId}`);
     spawnCompanyParticles(companyId);
+
+    // Tint the circuit lights toward the first character color of the company
+    const characters = companyData[companyId];
+    if (characters && characters.length > 0 && circuitLayer) {
+      const tintColor = characters[0].color;
+      // Convert hex to rgba for the glow
+      const r = parseInt(tintColor.slice(1, 3), 16);
+      const g = parseInt(tintColor.slice(3, 5), 16);
+      const b = parseInt(tintColor.slice(5, 7), 16);
+      circuitLayer.style.setProperty('--circuit-glow', `rgba(${r}, ${g}, ${b}, 0.55)`);
+    }
   } else {
     const layer = document.getElementById('particle-canvas');
     if (layer) layer.innerHTML = '';
