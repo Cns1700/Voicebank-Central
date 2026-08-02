@@ -168,6 +168,7 @@ body {
     box-shadow 0.3s ease,
     border-color 0.3s ease;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* prevent double-tap zoom */
 }
 
 .center-hub:hover,
@@ -177,7 +178,7 @@ body {
 }
 
 .center-hub:focus-visible {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.45), 0 0 20px currentColor;
 }
 
 /* Individual company color schemes */
@@ -267,6 +268,7 @@ body {
   background-size: var(--char-scale, 145%);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .character-node:hover,
@@ -276,6 +278,10 @@ body {
   box-shadow: 0 0 26px var(--glow-color);
   outline: none;
   z-index: 30;
+}
+
+.character-node:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 0 26px var(--glow-color);
 }
 
 .node-label {
@@ -344,6 +350,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  touch-action: manipulation;
 }
 
 .nav-btn:hover,
@@ -352,6 +359,10 @@ body {
   background: rgba(0, 255, 204, 0.08);
   text-shadow: 0 0 10px rgba(0, 255, 204, 0.55);
   outline: none;
+}
+
+.nav-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(0, 255, 204, 0.45);
 }
 
 .nav-btn:active {
@@ -419,8 +430,8 @@ body {
   border: none;
   color: #ffffff;
   font-size: 1.8rem;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   cursor: pointer;
   z-index: 510;
@@ -430,6 +441,7 @@ body {
   justify-content: center;
   transition: opacity 0.2s, background 0.2s;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .modal-close-btn:hover,
@@ -437,6 +449,10 @@ body {
   opacity: 1;
   background: rgba(255, 255, 255, 0.12);
   outline: none;
+}
+
+.modal-close-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
 }
 
 .modal-image-frame {
@@ -473,48 +489,52 @@ body {
 .bg-twindrill  { background: linear-gradient(135deg, #140408, #330b18, #0c0205); background-size: 300% 300%; }
 .bg-internet   { background: linear-gradient(135deg, #041406, #0b3311, #020c03); background-size: 300% 300%; }
 
-/* ---------- Circuit Board Layer ---------- */
+/* ---------- Circuit Board Layer (enhanced) ---------- */
 .circuit-layer {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.6;
   background-image:
-    /* solder pads */
-    radial-gradient(circle, rgba(0, 255, 204, 0.18) 1.2px, transparent 1.6px),
-    radial-gradient(circle, rgba(0, 200, 180, 0.12) 1px, transparent 1.4px),
+    /* denser solder pads */
+    radial-gradient(circle, rgba(0, 255, 204, 0.22) 1.3px, transparent 1.7px),
+    radial-gradient(circle, rgba(0, 200, 180, 0.14) 1px, transparent 1.4px),
+    radial-gradient(circle, rgba(0, 255, 204, 0.1) 0.8px, transparent 1.1px),
     /* horizontal & vertical traces */
-    linear-gradient(0deg,   rgba(0, 255, 204, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg,  rgba(0, 255, 204, 0.07) 1px, transparent 1px),
+    linear-gradient(0deg,   rgba(0, 255, 204, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg,  rgba(0, 255, 204, 0.08) 1px, transparent 1px),
     /* subtle diagonal traces */
-    linear-gradient(45deg,  rgba(0, 180, 160, 0.04) 0.6px, transparent 0.6px),
-    linear-gradient(-45deg, rgba(0, 180, 160, 0.04) 0.6px, transparent 0.6px);
+    linear-gradient(45deg,  rgba(0, 180, 160, 0.05) 0.7px, transparent 0.7px),
+    linear-gradient(-45deg, rgba(0, 180, 160, 0.05) 0.7px, transparent 0.7px);
   background-size:
-    48px 48px,
-    32px 32px,
+    42px 42px,
     28px 28px,
-    28px 28px,
-    40px 40px,
-    40px 40px;
+    18px 18px,
+    24px 24px,
+    24px 24px,
+    36px 36px,
+    36px 36px;
   background-position:
-    12px 12px,
+    10px 10px,
     0 0,
+    4px 4px,
     0 0,
     0 0,
     0 0,
     0 0;
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, black 15%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, black 15%, transparent 78%);
+  transition: opacity 0.8s ease;
 }
 
-/* Animated light packets that travel along the grid (horizontal + vertical) */
+/* Animated light packets (horizontal + vertical + extra) */
 .circuit-layer::before,
 .circuit-layer::after {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.7;
+  opacity: 0.75;
   pointer-events: none;
 }
 
@@ -523,15 +543,21 @@ body {
   background-image:
     linear-gradient(90deg,
       transparent 0%,
-      transparent 40%,
+      transparent 38%,
       var(--circuit-glow) 50%,
-      transparent 60%,
+      transparent 62%,
+      transparent 100%),
+    linear-gradient(90deg,
+      transparent 0%,
+      transparent 45%,
+      rgba(0, 220, 255, 0.4) 52%,
+      transparent 59%,
       transparent 100%);
-  background-size: 220% 2px;
+  background-size: 200% 2px, 260% 1.5px;
   background-repeat: no-repeat;
-  background-position: 0 28%;
-  animation: circuitFlowX 11s linear infinite;
-  animation-delay: -2s;
+  background-position: 0 22%, 0 68%;
+  animation: circuitFlowX 10s linear infinite, circuitFlowX 16s linear infinite reverse;
+  animation-delay: -1s, -7s;
 }
 
 /* Vertical flowing lights */
@@ -540,24 +566,30 @@ body {
     linear-gradient(180deg,
       transparent 0%,
       transparent 35%,
-      rgba(0, 220, 255, 0.5) 48%,
-      transparent 62%,
+      var(--circuit-glow) 48%,
+      transparent 61%,
+      transparent 100%),
+    linear-gradient(180deg,
+      transparent 0%,
+      transparent 42%,
+      rgba(0, 200, 255, 0.35) 50%,
+      transparent 58%,
       transparent 100%);
-  background-size: 2px 220%;
+  background-size: 2px 200%, 1.5px 240%;
   background-repeat: no-repeat;
-  background-position: 35% 0;
-  animation: circuitFlowY 14s linear infinite;
-  animation-delay: -5s;
+  background-position: 28% 0, 72% 0;
+  animation: circuitFlowY 13s linear infinite, circuitFlowY 19s linear infinite reverse;
+  animation-delay: -3s, -9s;
 }
 
 @keyframes circuitFlowX {
-  0%   { background-position-x: -40%; }
-  100% { background-position-x: 140%; }
+  0%   { background-position-x: -50%, -30%; }
+  100% { background-position-x: 150%, 130%; }
 }
 
 @keyframes circuitFlowY {
-  0%   { background-position-y: -40%; }
-  100% { background-position-y: 140%; }
+  0%   { background-position-y: -50%, -30%; }
+  100% { background-position-y: 150%, 130%; }
 }
 
 /* ---------- Floating Particles ---------- */
@@ -648,7 +680,7 @@ body {
     font-size: 0.78rem;
     padding: 12px 10px;
     min-height: 48px;
-    min-width: 0; /* let grid control width */
+    min-width: 0;
     width: 100%;
     max-width: none;
   }
@@ -684,7 +716,7 @@ body {
   }
   .galaxy-nav {
     padding: 8px 12px;
-    display: flex; /* back to flex in landscape for compactness */
+    display: flex;
     flex-wrap: wrap;
   }
   .nav-btn {
