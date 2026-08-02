@@ -11,43 +11,43 @@
 // ---------------------------------------------------------------------------
 const companyData = {
   cfm: [
-    { name: "Hatsune<br>Miku",   color: "#39C5BB", image: "CFM/Miku.webp",          nodeImage: "CFM/Miku-node.webp",          alignX: "center", alignY: "5%",  scale: "210%" },
-    { name: "Kagamine<br>Rin",   color: "#FFB11B", image: "CFM/Rin.webp",           nodeImage: "CFM/Rin-node.webp",           alignX: "40%",    alignY: "9%",  scale: "210%" },
-    { name: "Kagamine<br>Len",   color: "#FFE41B", image: "CFM/Len.webp",           nodeImage: "CFM/Len-node.webp",           alignX: "55%",    alignY: "9%",  scale: "210%" },
-    { name: "Megurine<br>Luka",  color: "#FFB1BB", image: "CFM/Luka.webp",          nodeImage: "CFM/Luka-node.webp",          alignX: "center", alignY: "6%",  scale: "210%" },
-    { name: "KAITO",             color: "#3366CC", image: "CFM/KAITO.webp",         nodeImage: "CFM/KAITO-node.webp",         alignX: "20%",    alignY: "5%",  scale: "230%" },
-    { name: "MEIKO",             color: "#CC0033", image: "CFM/MEIKO.webp",         nodeImage: "CFM/MEIKO-node.webp",         alignX: "60%",    alignY: "3%",  scale: "230%" }
+    { name: "Hatsune<br>Miku",   color: "#39C5BB", image: "CFM/Miku.webp",          nodeImage: "CFM/Miku-node.webp" },
+    { name: "Kagamine<br>Rin",   color: "#FFB11B", image: "CFM/Rin.webp",           nodeImage: "CFM/Rin-node.webp" },
+    { name: "Kagamine<br>Len",   color: "#FFE41B", image: "CFM/Len.webp",           nodeImage: "CFM/Len-node.webp" },
+    { name: "Megurine<br>Luka",  color: "#FFB1BB", image: "CFM/Luka.webp",          nodeImage: "CFM/Luka-node.webp" },
+    { name: "KAITO",             color: "#3366CC", image: "CFM/KAITO.webp",         nodeImage: "CFM/KAITO-node.webp" },
+    { name: "MEIKO",             color: "#CC0033", image: "CFM/MEIKO.webp",         nodeImage: "CFM/MEIKO-node.webp" }
   ],
   ahs: [
-    { name: "Hiyama<br>Sora",    color: "#60C0FF", image: "AHS/H-Sora.webp",        nodeImage: "AHS/H-Sora-node.webp",        alignX: "45%",    alignY: "3%",  scale: "250%" },
-    { name: "Kizuna<br>Akari",   color: "#FF9999", image: "AHS/Kizuna-Akari.webp",  nodeImage: "AHS/Kizuna-Akari-node.webp",  alignX: "25%",    alignY: "1%",  scale: "250%" },
-    { name: "Miyamai<br>Moca",   color: "#FFCC33", image: "AHS/Miyamai_Moca.webp",  nodeImage: "AHS/Miyamai_Moca-node.webp",  alignX: "55%",    alignY: "1%",  scale: "220%" },
-    { name: "SF-A2<br>miki V4",  color: "#FF3366", image: "AHS/SF-A2-miki-V4.webp", nodeImage: "AHS/SF-A2-miki-V4-node.webp", alignX: "35%",    alignY: "20%", scale: "230%" },
-    { name: "Tsurumaki<br>Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.webp",nodeImage: "AHS/Tsurumaki-Maki-node.webp",alignX: "65%",    alignY: "7%",  scale: "250%" },
-    { name: "Yuzuki<br>Yukari",  color: "#A47CD6", image: "AHS/Yuzuki_Yukari.webp", nodeImage: "AHS/Yuzuki_Yukari-node.webp", alignX: "55%",    alignY: "1%",  scale: "250%" }
+    { name: "Hiyama<br>Sora",    color: "#60C0FF", image: "AHS/H-Sora.webp",        nodeImage: "AHS/H-Sora-node.webp" },
+    { name: "Kizuna<br>Akari",   color: "#FF9999", image: "AHS/Kizuna-Akari.webp",  nodeImage: "AHS/Kizuna-Akari-node.webp" },
+    { name: "Miyamai<br>Moca",   color: "#FFCC33", image: "AHS/Miyamai_Moca.webp",  nodeImage: "AHS/Miyamai_Moca-node.webp" },
+    { name: "SF-A2<br>miki V4",  color: "#FF3366", image: "AHS/SF-A2-miki-V4.webp", nodeImage: "AHS/SF-A2-miki-V4-node.webp" },
+    { name: "Tsurumaki<br>Maki", color: "#FF55BB", image: "AHS/Tsurumaki-Maki.webp",nodeImage: "AHS/Tsurumaki-Maki-node.webp" },
+    { name: "Yuzuki<br>Yukari",  color: "#A47CD6", image: "AHS/Yuzuki_Yukari.webp", nodeImage: "AHS/Yuzuki_Yukari-node.webp" }
   ],
   kamitsubaki: [
-    { name: "COKO",  color: "#FF007F", image: "Kamitsubaki/COKO.webp",  nodeImage: "Kamitsubaki/COKO-node.webp",  alignX: "32%", alignY: "1%", scale: "250%" },
-    { name: "HARU",  color: "#FF3333", image: "Kamitsubaki/HARU.webp",  nodeImage: "Kamitsubaki/HARU-node.webp",  alignX: "55%", alignY: "1%", scale: "200%" },
-    { name: "KAFU",  color: "#00FFFF", image: "Kamitsubaki/KAFU.webp",  nodeImage: "Kamitsubaki/KAFU-node.webp",  alignX: "52%", alignY: "3%", scale: "330%" },
-    { name: "RIME",  color: "#FFAA00", image: "Kamitsubaki/RIME.webp",  nodeImage: "Kamitsubaki/RIME-node.webp",  alignX: "40%", alignY: "1%", scale: "180%" },
-    { name: "SEKAI", color: "#9933FF", image: "Kamitsubaki/SEKAI.webp", nodeImage: "Kamitsubaki/SEKAI-node.webp", alignX: "45%", alignY: "0%", scale: "220%" }
+    { name: "COKO",  color: "#FF007F", image: "Kamitsubaki/COKO.webp",  nodeImage: "Kamitsubaki/COKO-node.webp" },
+    { name: "HARU",  color: "#FF3333", image: "Kamitsubaki/HARU.webp",  nodeImage: "Kamitsubaki/HARU-node.webp" },
+    { name: "KAFU",  color: "#00FFFF", image: "Kamitsubaki/KAFU.webp",  nodeImage: "Kamitsubaki/KAFU-node.webp" },
+    { name: "RIME",  color: "#FFAA00", image: "Kamitsubaki/RIME.webp",  nodeImage: "Kamitsubaki/RIME-node.webp" },
+    { name: "SEKAI", color: "#9933FF", image: "Kamitsubaki/SEKAI.webp", nodeImage: "Kamitsubaki/SEKAI-node.webp" }
   ],
   frstplace: [
-    { name: "HIPPI", color: "#FF44aa", image: "FrstPlace/HIPPI.webp", nodeImage: "FrstPlace/HIPPI-node.webp", alignX: "55%",  alignY: "9.8%", scale: "320%" },
-    { name: "IA",    color: "#FFCCCC", image: "FrstPlace/IA.webp",    nodeImage: "FrstPlace/IA-node.webp",    alignX: "68%",  alignY: "8%",   scale: "320%" },
-    { name: "ONE",   color: "#FF8833", image: "FrstPlace/ONE.webp",   nodeImage: "FrstPlace/ONE-node.webp",   alignX: "52%",  alignY: "1%",   scale: "300%" }
+    { name: "HIPPI", color: "#FF44aa", image: "FrstPlace/HIPPI.webp", nodeImage: "FrstPlace/HIPPI-node.webp" },
+    { name: "IA",    color: "#FFCCCC", image: "FrstPlace/IA.webp",    nodeImage: "FrstPlace/IA-node.webp" },
+    { name: "ONE",   color: "#FF8833", image: "FrstPlace/ONE.webp",   nodeImage: "FrstPlace/ONE-node.webp" }
   ],
   twindrill: [
-    { name: "Kasane<br>Teto", color: "#FF4060", image: "Twindrill/Teto.webp", nodeImage: "Twindrill/Teto-node.webp", alignX: "53%", alignY: "5%", scale: "235%" }
+    { name: "Kasane<br>Teto", color: "#FF4060", image: "Twindrill/Teto.webp", nodeImage: "Twindrill/Teto-node.webp" }
   ],
   internet: [
-    { name: "GUMI",            color: "#33CC33", image: "Internet/Gumi.webp",   nodeImage: "Internet/Gumi-node.webp",   alignX: "25%", alignY: "3%", scale: "225%" },
-    { name: "Lily",            color: "#FFEE00", image: "Internet/Lily.webp",   nodeImage: "Internet/Lily-node.webp",   alignX: "35%", alignY: "5%", scale: "255%" },
-    { name: "Rosa",            color: "#FF66CC", image: "Internet/Rosa.webp",   nodeImage: "Internet/Rosa-node.webp",   alignX: "35%", alignY: "3%", scale: "255%" },
-    { name: "galaco",          color: "#9933FF", image: "Internet/Galaco.webp", nodeImage: "Internet/Galaco-node.webp", alignX: "55%", alignY: "3%", scale: "245%" },
-    { name: "CUL",             color: "#FF0033", image: "Internet/Cul.webp",    nodeImage: "Internet/Cul-node.webp",    alignX: "59%", alignY: "1%", scale: "245%" },
-    { name: "Otomachi<br>Una", color: "#0099FF", image: "Internet/Una.webp",    nodeImage: "Internet/Una-node.webp",    alignX: "59%", alignY: "3%", scale: "245%" }
+    { name: "GUMI",            color: "#33CC33", image: "Internet/Gumi.webp",   nodeImage: "Internet/Gumi-node.webp" },
+    { name: "Lily",            color: "#FFEE00", image: "Internet/Lily.webp",   nodeImage: "Internet/Lily-node.webp" },
+    { name: "Rosa",            color: "#FF66CC", image: "Internet/Rosa.webp",   nodeImage: "Internet/Rosa-node.webp" },
+    { name: "galaco",          color: "#9933FF", image: "Internet/Galaco.webp", nodeImage: "Internet/Galaco-node.webp" },
+    { name: "CUL",             color: "#FF0033", image: "Internet/Cul.webp",    nodeImage: "Internet/Cul-node.webp" },
+    { name: "Otomachi<br>Una", color: "#0099FF", image: "Internet/Una.webp",    nodeImage: "Internet/Una-node.webp" }
   ]
 };
 
@@ -109,11 +109,8 @@ function expandCharacters(container) {
     node.style.setProperty('--y', `${y}px`);
     node.style.setProperty('--glow-color', char.color);
 
-    // Use the small optimized node image for the circular map nodes
+    // Use the small optimized node image. Framing is handled uniformly in CSS.
     node.style.backgroundImage = `url('${char.nodeImage || char.image}')`;
-    node.style.setProperty('--char-x', char.alignX || 'center');
-    node.style.setProperty('--char-y', char.alignY || '20%');
-    node.style.setProperty('--char-scale', char.scale || '145%');
 
     const label = document.createElement('span');
     label.className = 'node-label';
