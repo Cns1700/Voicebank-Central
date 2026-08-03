@@ -14,7 +14,7 @@
   --font-display: 'Orbitron', sans-serif;
   --font-body: 'Segoe UI', system-ui, sans-serif;
   --transition-smooth: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  --touch-min: 44px; /* Recommended minimum touch target */
+  --touch-min: 44px;
   --circuit-glow: rgba(0, 255, 204, 0.55);
 }
 
@@ -39,7 +39,7 @@ body {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
-  height: 100dvh; /* Dynamic viewport for mobile browsers */
+  height: 100dvh;
   -webkit-font-smoothing: antialiased;
   user-select: none;
   -webkit-user-select: none;
@@ -47,7 +47,6 @@ body {
   -ms-user-select: none;
 }
 
-/* Kill the blue/gray selection highlight everywhere on the map */
 body ::selection,
 .galaxy-viewport ::selection,
 .universe-canvas ::selection,
@@ -79,7 +78,7 @@ body ::selection,
   overflow: hidden;
   background: transparent;
   cursor: grab;
-  touch-action: none; /* needed for pointer-based pan on touch devices */
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -90,7 +89,7 @@ body ::selection,
   cursor: grabbing;
 }
 
-/* ---------- Universe Canvas (the zoomable map) ---------- */
+/* ---------- Universe Canvas ---------- */
 .universe-canvas {
   position: absolute;
   width: 2000px;
@@ -150,7 +149,7 @@ body ::selection,
   text-shadow: 0 0 8px rgba(0, 255, 204, 0.45);
 }
 
-/* ---------- Overlay (dims background when focused) ---------- */
+/* ---------- Overlay ---------- */
 .galaxy-overlay {
   position: fixed;
   inset: 0;
@@ -214,7 +213,6 @@ body ::selection,
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.45), 0 0 20px currentColor;
 }
 
-/* Individual company color schemes */
 .center-hub-cfm {
   background: #33537c;
   border-color: #00ffcc;
@@ -281,7 +279,26 @@ body ::selection,
   box-shadow: 0 0 32px rgba(0, 119, 255, 0.75);
 }
 
-/* ---------- Connection Lines (SVG) ---------- */
+/* ---------- Constellation Lines (between hubs) ---------- */
+.constellation-lines {
+  overflow: visible;
+}
+
+.constellation-line {
+  stroke: rgba(0, 255, 204, 0.12);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  fill: none;
+  transition: stroke 0.4s ease, stroke-width 0.4s ease, filter 0.4s ease;
+}
+
+.constellation-line.is-active {
+  stroke: rgba(0, 255, 204, 0.55);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 204, 0.45));
+}
+
+/* ---------- Connection Lines (hub → characters) ---------- */
 .connection-lines {
   overflow: visible;
 }
@@ -459,14 +476,8 @@ body ::selection,
 }
 
 @keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 .modal-close-btn {
