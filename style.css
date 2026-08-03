@@ -63,6 +63,12 @@ body {
   height: 100dvh;
   overflow: hidden;
   background: transparent;
+  cursor: grab;
+  touch-action: none; /* needed for pointer-based pan on touch devices */
+}
+
+.galaxy-viewport.is-dragging {
+  cursor: grabbing;
 }
 
 /* ---------- Universe Canvas (the zoomable map) ---------- */
@@ -168,7 +174,7 @@ body {
     box-shadow 0.3s ease,
     border-color 0.3s ease;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation; /* prevent double-tap zoom */
+  touch-action: manipulation;
 }
 
 .center-hub:hover,
@@ -248,8 +254,18 @@ body {
   box-shadow: 0 0 32px rgba(0, 119, 255, 0.75);
 }
 
+/* ---------- Connection Lines (SVG) ---------- */
+.connection-lines {
+  overflow: visible;
+}
+
+.connection-line {
+  fill: none;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 8px currentColor);
+}
+
 /* ---------- Character Nodes ---------- */
-/* Framing is controlled per-character via --char-x, --char-y, --char-scale */
 .character-node {
   position: absolute;
   width: 110px;
@@ -370,8 +386,7 @@ body {
   background: rgba(0, 255, 204, 0.15);
 }
 
-/* ---------- Portrait Modal (FIXED) ---------- */
-/* Native <dialog> is hidden by default. Only show when it has the open attribute. */
+/* ---------- Portrait Modal ---------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -381,7 +396,7 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 500;
-  display: none; /* CRITICAL: keep closed until showModal() */
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 16px;
@@ -395,7 +410,7 @@ body {
 }
 
 .modal-overlay::backdrop {
-  background: transparent; /* we handle the dim ourselves */
+  background: transparent;
 }
 
 .modal-card {
@@ -482,7 +497,6 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* Company-themed gradient variants */
 .bg-cfm        { background: linear-gradient(135deg, #021114, #062b2e, #010a0c); background-size: 300% 300%; }
 .bg-ahs        { background: linear-gradient(135deg, #09040d, #1a0b26, #040206); background-size: 300% 300%; }
 .bg-kamitsubaki{ background: linear-gradient(135deg, #021414, #052c33, #010b0d); background-size: 300% 300%; }
@@ -490,7 +504,7 @@ body {
 .bg-twindrill  { background: linear-gradient(135deg, #140408, #330b18, #0c0205); background-size: 300% 300%; }
 .bg-internet   { background: linear-gradient(135deg, #041406, #0b3311, #020c03); background-size: 300% 300%; }
 
-/* ---------- Circuit Board Layer (enhanced) ---------- */
+/* ---------- Circuit Board Layer ---------- */
 .circuit-layer {
   position: absolute;
   inset: 0;
@@ -498,14 +512,11 @@ body {
   pointer-events: none;
   opacity: 0.6;
   background-image:
-    /* denser solder pads */
     radial-gradient(circle, rgba(0, 255, 204, 0.22) 1.3px, transparent 1.7px),
     radial-gradient(circle, rgba(0, 200, 180, 0.14) 1px, transparent 1.4px),
     radial-gradient(circle, rgba(0, 255, 204, 0.1) 0.8px, transparent 1.1px),
-    /* horizontal & vertical traces */
     linear-gradient(0deg,   rgba(0, 255, 204, 0.08) 1px, transparent 1px),
     linear-gradient(90deg,  rgba(0, 255, 204, 0.08) 1px, transparent 1px),
-    /* subtle diagonal traces */
     linear-gradient(45deg,  rgba(0, 180, 160, 0.05) 0.7px, transparent 0.7px),
     linear-gradient(-45deg, rgba(0, 180, 160, 0.05) 0.7px, transparent 0.7px);
   background-size:
@@ -529,7 +540,6 @@ body {
   transition: opacity 0.8s ease;
 }
 
-/* Animated light packets (horizontal + vertical + extra) */
 .circuit-layer::before,
 .circuit-layer::after {
   content: "";
@@ -539,7 +549,6 @@ body {
   pointer-events: none;
 }
 
-/* Horizontal flowing lights */
 .circuit-layer::before {
   background-image:
     linear-gradient(90deg,
@@ -561,7 +570,6 @@ body {
   animation-delay: -1s, -7s;
 }
 
-/* Vertical flowing lights */
 .circuit-layer::after {
   background-image:
     linear-gradient(180deg,
@@ -664,7 +672,6 @@ body {
     padding: 2px 6px;
   }
 
-  /* Improved mobile navigation: CSS Grid for consistent large touch targets */
   .galaxy-nav {
     bottom: max(12px, env(safe-area-inset-bottom));
     width: calc(100% - 16px);
@@ -687,7 +694,6 @@ body {
   }
 }
 
-/* Very small phones */
 @media (max-width: 380px) {
   .nav-btn {
     font-size: 0.72rem;
@@ -704,7 +710,6 @@ body {
   }
 }
 
-/* Landscape phones – give nav a bit more breathing room */
 @media (max-height: 500px) and (orientation: landscape) {
   .galaxy-header {
     padding-top: 8px;
@@ -727,7 +732,6 @@ body {
   }
 }
 
-/* Prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .universe-canvas,
   .galaxy-header,
@@ -736,7 +740,8 @@ body {
   .floating-shape,
   .gradient-scroller,
   .circuit-layer::before,
-  .circuit-layer::after {
+  .circuit-layer::after,
+  .connection-line {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
