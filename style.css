@@ -1,9 +1,7 @@
 /* =========================================================
    Voicebank Central — Core Styles
-   Cleaned & mobile-optimized layout + circuit-board aesthetic
    ========================================================= */
 
-/* ---------- CSS Custom Properties (theme tokens) ---------- */
 :root {
   --bg-deep: #05050a;
   --accent-cyan: #00ffcc;
@@ -16,9 +14,9 @@
   --transition-smooth: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   --touch-min: 44px;
   --circuit-glow: rgba(0, 255, 204, 0.55);
+  --orbit-duration: 48s; /* slow, smooth orbit */
 }
 
-/* ---------- Reset & Base ---------- */
 *,
 *::before,
 *::after {
@@ -69,7 +67,7 @@ body ::selection,
   border: 0;
 }
 
-/* ---------- Viewport Shell ---------- */
+/* ---------- Viewport ---------- */
 .galaxy-viewport {
   position: relative;
   width: 100vw;
@@ -81,8 +79,6 @@ body ::selection,
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
 .galaxy-viewport.is-dragging {
@@ -101,12 +97,9 @@ body ::selection,
   z-index: 10;
   will-change: transform;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
-/* ---------- Fixed Header ---------- */
+/* ---------- Header ---------- */
 .galaxy-header {
   position: fixed;
   top: 0;
@@ -198,9 +191,6 @@ body ::selection,
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
 .center-hub:hover,
@@ -279,28 +269,25 @@ body ::selection,
   box-shadow: 0 0 32px rgba(0, 119, 255, 0.75);
 }
 
-/* ---------- Constellation Lines (between hubs) ---------- */
-.constellation-lines {
-  overflow: visible;
+/* ---------- Orbit Group (pure CSS spin) ---------- */
+.orbit-group {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none; /* nodes re-enable their own pointer events */
+  animation: orbitSpin var(--orbit-duration) linear infinite;
+  will-change: transform;
 }
 
-.constellation-line {
-  stroke: rgba(0, 255, 204, 0.12);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  fill: none;
-  transition: stroke 0.4s ease, stroke-width 0.4s ease, filter 0.4s ease;
+@keyframes orbitSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-.constellation-line.is-active {
-  stroke: rgba(0, 255, 204, 0.55);
-  stroke-width: 2;
-  filter: drop-shadow(0 0 4px rgba(0, 255, 204, 0.45));
-}
-
-/* ---------- Connection Lines (hub → characters) ---------- */
+/* ---------- Connection Lines ---------- */
 .connection-lines {
   overflow: visible;
+  pointer-events: none;
 }
 
 .connection-line {
@@ -328,17 +315,33 @@ body ::selection,
     box-shadow 0.3s ease,
     border-color 0.3s ease;
   cursor: pointer;
+  pointer-events: auto;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
+/* Once expanded, counter-rotate so faces stay upright while the group spins */
+.character-node.is-orbiting {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  animation: orbitCounter var(--orbit-duration) linear infinite;
+  will-change: transform;
+}
+
+@keyframes orbitCounter {
+  from {
+    transform: translate(var(--x), var(--y)) rotate(0deg) scale(1);
+  }
+  to {
+    transform: translate(var(--x), var(--y)) rotate(-360deg) scale(1);
+  }
+}
+
+/* Hover scale — applied on a pseudo-wrapper via filter isn't ideal;
+   instead scale during hover by overriding animation briefly is hard.
+   Use box-shadow + border for hover feedback so we don't fight the animation. */
 .character-node:hover,
 .character-node:focus-visible {
-  transform: translate(var(--x), var(--y)) scale(1.18) !important;
   border-color: var(--glow-color) !important;
   box-shadow: 0 0 26px var(--glow-color);
   outline: none;
@@ -375,7 +378,7 @@ body ::selection,
   opacity: 1;
 }
 
-/* ---------- Navigation Dock ---------- */
+/* ---------- Navigation ---------- */
 .galaxy-nav {
   position: absolute;
   bottom: max(16px, env(safe-area-inset-bottom));
@@ -434,7 +437,7 @@ body ::selection,
   background: rgba(0, 255, 204, 0.15);
 }
 
-/* ---------- Portrait Modal ---------- */
+/* ---------- Modal ---------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -522,7 +525,7 @@ body ::selection,
   border-radius: 10px;
 }
 
-/* ---------- Background Layers ---------- */
+/* ---------- Backgrounds ---------- */
 .gradient-scroller {
   position: absolute;
   inset: 0;
@@ -546,7 +549,7 @@ body ::selection,
 .bg-twindrill  { background: linear-gradient(135deg, #140408, #330b18, #0c0205); background-size: 300% 300%; }
 .bg-internet   { background: linear-gradient(135deg, #041406, #0b3311, #020c03); background-size: 300% 300%; }
 
-/* ---------- Circuit Board Layer ---------- */
+/* ---------- Circuit Layer ---------- */
 .circuit-layer {
   position: absolute;
   inset: 0;
@@ -643,7 +646,7 @@ body ::selection,
   100% { background-position-y: 150%, 130%; }
 }
 
-/* ---------- Floating Particles ---------- */
+/* ---------- Particles ---------- */
 .particle-layer {
   position: absolute;
   inset: 0;
@@ -684,9 +687,7 @@ body ::selection,
   }
 }
 
-/* =========================================================
-   MOBILE & RESPONSIVE
-   ========================================================= */
+/* ---------- Mobile ---------- */
 @media (max-width: 768px) {
   .galaxy-header {
     padding-top: max(12px, env(safe-area-inset-top));
@@ -783,7 +784,8 @@ body ::selection,
   .gradient-scroller,
   .circuit-layer::before,
   .circuit-layer::after,
-  .connection-line {
+  .connection-line,
+  .orbit-group {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
