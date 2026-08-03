@@ -1,11 +1,11 @@
 /**
  * Voicebank Central — Interactive Network Map
- * Cleaned, accessible, and mobile-friendly version
- * Uses optimized WebP images for fast loading
  *
  * Features:
  *   - Free pan & drag of the galaxy map
  *   - Animated glowing connection lines (hub → characters)
+ *   - Orbiting character nodes
+ *   - Permanent constellation lines between company hubs
  *   - Per-character framing controls (alignX / alignY / scale)
  */
 
@@ -54,6 +54,16 @@ const companyData = {
   ]
 };
 
+// Company hub positions (must match style left/top in index.html)
+const companyPositions = {
+  cfm:         { x: 1000, y: 1000 },
+  ahs:         { x: 600,  y: 1350 },
+  kamitsubaki: { x: 1400, y: 670  },
+  frstplace:   { x: 1400, y: 1350 },
+  twindrill:   { x: 600,  y: 650  },
+  internet:    { x: 400,  y: 1000 }
+};
+
 // ---------------------------------------------------------------------------
 // DOM references
 // ---------------------------------------------------------------------------
@@ -73,27 +83,18 @@ const hubButtons  = document.querySelectorAll('.center-hub');
 let lastFocusedElement = null;
 
 // ---------------------------------------------------------------------------
-// Camera state (used by both programmatic moves and free pan/drag)
+// Camera state
 // ---------------------------------------------------------------------------
-const camera = {
-  x: 1000,
-  y: 1000,
-  zoom: 1.0
-};
+const camera = { x: 1000, y: 1000, zoom: 1.0 };
 
 function applyCamera(animate = true) {
   const clampedZoom = Math.min(Math.max(camera.zoom, 0.3), 3.0);
   camera.zoom = clampedZoom;
-
   const offsetX = (1000 - camera.x) * clampedZoom;
   const offsetY = (1000 - camera.y) * clampedZoom;
-
-  if (animate) {
-    canvas.style.transition = 'transform 1000ms cubic-bezier(0.25, 1, 0.5, 1)';
-  } else {
-    canvas.style.transition = 'none';
-  }
-
+  canvas.style.transition = animate
+    ? 'transform 1000ms cubic-bezier(0.25, 1, 0.5, 1)'
+    : 'none';
   canvas.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${clampedZoom})`;
 }
 
@@ -116,7 +117,7 @@ let dragStartX = 0;
 let dragStartY = 0;
 let cameraStartX = 0;
 let cameraStartY = 0;
-let hasDragged = false; // distinguishes click from drag
+let hasDragged = false;
 
 function clearSelection() {
   const sel = window.getSelection?.();
@@ -124,10 +125,7 @@ function clearSelection() {
 }
 
 function onPointerDown(e) {
-  // Ignore if clicking interactive elements (hubs, nodes, nav, modal)
-  if (e.target.closest('.center-hub, .character-node, .nav-btn, .modal-overlay, .modal-card')) {
-    return;
-  }
+  if (e.target.closest('.center-hub, .character-node, .nav-btn, .modal-overlay, .modal-card')) return;
 
   isDragging = true;
   hasDragged = false;
@@ -135,35 +133,20 @@ function onPointerDown(e) {
   dragStartY = e.clientY;
   cameraStartX = camera.x;
   cameraStartY = camera.y;
-
   viewport.classList.add('is-dragging');
   canvas.style.transition = 'none';
-
-  // Prevent any existing text selection from starting/continuing
   clearSelection();
-
-  // Capture pointer so we keep receiving events even if cursor leaves
   viewport.setPointerCapture?.(e.pointerId);
 }
 
 function onPointerMove(e) {
   if (!isDragging) return;
-
-  // Keep clearing selection while dragging (some browsers re-create it)
   clearSelection();
-
   const dx = e.clientX - dragStartX;
   const dy = e.clientY - dragStartY;
-
-  // Only count as a real drag after a small threshold (avoids accidental micro-moves)
-  if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
-    hasDragged = true;
-  }
-
-  // Convert screen delta into world-space delta (inverse of zoom)
+  if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasDragged = true;
   camera.x = cameraStartX - dx / camera.zoom;
   camera.y = cameraStartY - dy / camera.zoom;
-
   applyCamera(false);
 }
 
@@ -175,28 +158,139 @@ function onPointerUp(e) {
   clearSelection();
 }
 
-// Pointer events (works for mouse + touch + pen)
 viewport.addEventListener('pointerdown', onPointerDown);
 viewport.addEventListener('pointermove', onPointerMove);
 viewport.addEventListener('pointerup', onPointerUp);
 viewport.addEventListener('pointercancel', onPointerUp);
-
-// Prevent text selection / image drag while panning
 viewport.addEventListener('dragstart', (e) => e.preventDefault());
 viewport.addEventListener('selectstart', (e) => e.preventDefault());
-document.addEventListener('selectstart', (e) => {
-  if (isDragging) e.preventDefault();
-});
+document.addEventListener('selectstart', (e) => { if (isDragging) e.preventDefault(); });
 
 // ---------------------------------------------------------------------------
-// Connection lines (SVG)
+// Constellation lines (permanent links between company hubs)
+// ---------------------------------------------------------------------------
+function createConstellationLines() {
+  // Remove old if re-init
+  const old = canvas.querySelector('.constellation-lines');
+  if (old) old.remove();
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'constellation-lines');
+  svg.setAttribute('width', '2000');
+  svg.setAttribute('height', '2000');
+  svg.setAttribute('viewBox', '0 0 2000 2000');
+  svg.style.position = 'absolute';
+  svg.style.left = '0';
+  svg.style.top = '0';
+  svg.style.pointerEvents = 'none';
+  svg.style.zIndex = '8';
+  svg.setAttribute('aria-hidden', 'true');
+
+  // Connect every hub to every other hub (full constellation)
+  const ids = Object.keys(companyPositions);
+  for (let i = 0; i < ids.length; i++) {
+    for (let j = i + 1; j < ids.length; j++) {
+      const a = companyPositions[ids[i]];
+      const b = companyPositions[ids[j]];
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', a.x);
+      line.setAttribute('y1', a.y);
+      line.setAttribute('x2', b.x);
+      line.setAttribute('y2', b.y);
+      line.setAttribute('class', 'constellation-line');
+      line.dataset.from = ids[i];
+      line.dataset.to = ids[j];
+      svg.appendChild(line);
+    }
+  }
+
+  // Insert behind the company containers
+  canvas.insertBefore(svg, canvas.firstChild);
+}
+
+function highlightConstellation(companyId) {
+  document.querySelectorAll('.constellation-line').forEach(line => {
+    const related = line.dataset.from === companyId || line.dataset.to === companyId;
+    line.classList.toggle('is-active', related);
+  });
+}
+
+function clearConstellationHighlight() {
+  document.querySelectorAll('.constellation-line').forEach(line => {
+    line.classList.remove('is-active');
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Orbit system for character nodes + their connection lines
+// ---------------------------------------------------------------------------
+let orbitRaf = null;
+let orbitAngle = 0;
+let orbitNodes = [];       // { node, baseAngle, radius }
+let orbitLines = [];       // { line, baseAngle, radius, center }
+let orbitContainer = null;
+
+const ORBIT_SPEED = 0.00018; // radians per ms — slow gentle orbit
+
+function startOrbit(container, nodes, lines, radius) {
+  stopOrbit();
+  orbitContainer = container;
+  orbitNodes = nodes;
+  orbitLines = lines;
+  orbitAngle = 0;
+
+  let lastTime = performance.now();
+
+  function tick(now) {
+    const dt = now - lastTime;
+    lastTime = now;
+    orbitAngle += ORBIT_SPEED * dt;
+
+    // Update node positions
+    orbitNodes.forEach(({ node, baseAngle, radius: r }) => {
+      const a = baseAngle + orbitAngle;
+      const x = Math.round(r * Math.cos(a));
+      const y = Math.round(r * Math.sin(a));
+      node.style.setProperty('--x', `${x}px`);
+      node.style.setProperty('--y', `${y}px`);
+      // Keep the current scale (1 or 1.18 on hover) — only update translate
+      const isHovered = node.matches(':hover, :focus-visible');
+      node.style.transform = `translate(${x}px, ${y}px) scale(${isHovered ? 1.18 : 1})`;
+    });
+
+    // Update connection line endpoints
+    orbitLines.forEach(({ line, baseAngle, radius: r, center }) => {
+      const a = baseAngle + orbitAngle;
+      const x = center + r * Math.cos(a);
+      const y = center + r * Math.sin(a);
+      line.setAttribute('x2', x);
+      line.setAttribute('y2', y);
+    });
+
+    orbitRaf = requestAnimationFrame(tick);
+  }
+
+  orbitRaf = requestAnimationFrame(tick);
+}
+
+function stopOrbit() {
+  if (orbitRaf) {
+    cancelAnimationFrame(orbitRaf);
+    orbitRaf = null;
+  }
+  orbitNodes = [];
+  orbitLines = [];
+  orbitContainer = null;
+}
+
+// ---------------------------------------------------------------------------
+// Connection lines (hub → characters) — now also feed the orbit system
 // ---------------------------------------------------------------------------
 function createConnectionLines(container, characters, radius) {
-  // Remove any existing SVG from previous expand
   const oldSvg = container.querySelector('.connection-lines');
   if (oldSvg) oldSvg.remove();
 
-  const size = 400; // large enough to cover the orbit
+  const size = 400;
   const center = size / 2;
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -212,10 +306,12 @@ function createConnectionLines(container, characters, radius) {
   svg.style.zIndex = '15';
   svg.setAttribute('aria-hidden', 'true');
 
+  const lineRefs = [];
+
   characters.forEach((char, index) => {
-    const angle = (index * 2 * Math.PI) / characters.length;
-    const x = center + radius * Math.cos(angle);
-    const y = center + radius * Math.sin(angle);
+    const baseAngle = (index * 2 * Math.PI) / characters.length;
+    const x = center + radius * Math.cos(baseAngle);
+    const y = center + radius * Math.sin(baseAngle);
 
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', center);
@@ -227,14 +323,13 @@ function createConnectionLines(container, characters, radius) {
     line.setAttribute('stroke-linecap', 'round');
     line.setAttribute('class', 'connection-line');
 
-    // Length for dash animation
     const length = Math.hypot(x - center, y - center);
     line.style.strokeDasharray = length;
     line.style.strokeDashoffset = length;
 
     svg.appendChild(line);
+    lineRefs.push({ line, baseAngle, radius, center });
 
-    // Stagger the draw animation
     requestAnimationFrame(() => {
       setTimeout(() => {
         line.style.transition = 'stroke-dashoffset 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
@@ -244,11 +339,11 @@ function createConnectionLines(container, characters, radius) {
   });
 
   container.appendChild(svg);
+  return lineRefs;
 }
 
 function removeConnectionLines() {
   document.querySelectorAll('.connection-lines').forEach(svg => {
-    // Fade out then remove
     svg.style.transition = 'opacity 0.3s ease';
     svg.style.opacity = '0';
     setTimeout(() => svg.remove(), 320);
@@ -266,13 +361,15 @@ function expandCharacters(container) {
 
   const radius = isMobileView() ? 125 : 170;
 
-  // Draw glowing connection lines first
-  createConnectionLines(container, characters, radius);
+  // Connection lines first (returns refs for orbit)
+  const lineRefs = createConnectionLines(container, characters, radius);
+
+  const nodeRefs = [];
 
   characters.forEach((char, index) => {
-    const angle = (index * 2 * Math.PI) / total;
-    const x = Math.round(radius * Math.cos(angle));
-    const y = Math.round(radius * Math.sin(angle));
+    const baseAngle = (index * 2 * Math.PI) / total;
+    const x = Math.round(radius * Math.cos(baseAngle));
+    const y = Math.round(radius * Math.sin(baseAngle));
 
     const node = document.createElement('button');
     node.type = 'button';
@@ -282,7 +379,6 @@ function expandCharacters(container) {
     node.style.setProperty('--x', `${x}px`);
     node.style.setProperty('--y', `${y}px`);
     node.style.setProperty('--glow-color', char.color);
-
     node.style.backgroundImage = `url('${char.nodeImage || char.image}')`;
     node.style.setProperty('--char-x', char.alignX || 'center');
     node.style.setProperty('--char-y', char.alignY || '15%');
@@ -299,18 +395,32 @@ function expandCharacters(container) {
     });
 
     container.appendChild(node);
+    nodeRefs.push({ node, baseAngle, radius });
 
+    // Initial expand animation (no orbit yet)
     requestAnimationFrame(() => {
       node.style.transform = `translate(${x}px, ${y}px) scale(1)`;
     });
   });
+
+  // Start the gentle orbit after the expand animation settles
+  setTimeout(() => {
+    // Disable the CSS transition so orbit updates are smooth
+    nodeRefs.forEach(({ node }) => {
+      node.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
+    });
+    startOrbit(container, nodeRefs, lineRefs, radius);
+  }, 650);
 }
 
 function retractAllCharacters() {
+  stopOrbit();
   removeConnectionLines();
+  clearConstellationHighlight();
 
   const activeNodes = document.querySelectorAll('.character-node');
   activeNodes.forEach(node => {
+    node.style.transition = 'transform 0.55s cubic-bezier(0.19, 1, 0.22, 1)';
     node.style.transform = 'translate(0, 0) scale(0)';
     setTimeout(() => {
       if (node.parentNode) node.remove();
@@ -325,70 +435,47 @@ function retractAllCharacters() {
 // ---------------------------------------------------------------------------
 function openPortrait(char, triggerElement) {
   lastFocusedElement = triggerElement || document.activeElement;
-
   modalCard.style.setProperty('--modal-glow', char.color);
   modalImageFrame.style.backgroundImage = `url('${char.image}')`;
   modalImageFrame.setAttribute('aria-label', `Full artwork of ${char.name.replace(/<br>/g, ' ')}`);
-
   portraitModal.showModal();
-
-  requestAnimationFrame(() => {
-    modalCloseBtn.focus();
-  });
+  requestAnimationFrame(() => modalCloseBtn.focus());
 }
 
 function closePortrait() {
-  if (portraitModal.open) {
-    portraitModal.close();
-  }
-
+  if (portraitModal.open) portraitModal.close();
   if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
     lastFocusedElement.focus();
   }
   lastFocusedElement = null;
-
-  setTimeout(() => {
-    modalImageFrame.style.backgroundImage = '';
-  }, 280);
+  setTimeout(() => { modalImageFrame.style.backgroundImage = ''; }, 280);
 }
 
 modalCloseBtn.addEventListener('click', closePortrait);
-
-portraitModal.addEventListener('click', (e) => {
-  if (e.target === portraitModal) closePortrait();
-});
-
-portraitModal.addEventListener('cancel', (e) => {
-  e.preventDefault();
-  closePortrait();
-});
+portraitModal.addEventListener('click', (e) => { if (e.target === portraitModal) closePortrait(); });
+portraitModal.addEventListener('cancel', (e) => { e.preventDefault(); closePortrait(); });
 
 // ---------------------------------------------------------------------------
-// Theme & particle system + circuit tinting
+// Theme & particles
 // ---------------------------------------------------------------------------
 function spawnCompanyParticles(companyId) {
   const layer = document.getElementById('particle-canvas');
   if (!layer) return;
-
   layer.innerHTML = '';
   const characters = companyData[companyId] || [];
   if (characters.length === 0) return;
 
-  const totalShapes = 14;
-  for (let i = 0; i < totalShapes; i++) {
+  for (let i = 0; i < 14; i++) {
     const randomChara = characters[i % characters.length];
     const themeColor = randomChara.color;
-
     const shape = document.createElement('div');
     shape.className = 'floating-shape';
     shape.style.setProperty('--shape-glow', themeColor);
     shape.style.backgroundColor = themeColor;
-
     const size = Math.random() * 14 + 7;
     shape.style.width  = `${size}px`;
     shape.style.height = `${size}px`;
     shape.style.left   = `${Math.random() * 100}vw`;
-
     shape.style.animationDuration =
       `${(Math.random() * 6 + 11).toFixed(1)}s, ` +
       `${(Math.random() * 2 + 5).toFixed(1)}s, ` +
@@ -397,7 +484,6 @@ function spawnCompanyParticles(companyId) {
       `${(Math.random() * -14).toFixed(1)}s, ` +
       `${(Math.random() * -7).toFixed(1)}s, ` +
       `${(Math.random() * -4).toFixed(1)}s`;
-
     layer.appendChild(shape);
   }
 }
@@ -405,7 +491,6 @@ function spawnCompanyParticles(companyId) {
 function updateScrollerBackground(companyId) {
   const bgLayer = document.getElementById('gradient-bg-layer');
   if (!bgLayer) return;
-
   bgLayer.className = 'gradient-scroller';
 
   if (circuitLayer) {
@@ -415,7 +500,6 @@ function updateScrollerBackground(companyId) {
   if (companyId && companyId !== 'home') {
     bgLayer.classList.add(`bg-${companyId}`);
     spawnCompanyParticles(companyId);
-
     const characters = companyData[companyId];
     if (characters && characters.length > 0 && circuitLayer) {
       const tintColor = characters[0].color;
@@ -431,7 +515,7 @@ function updateScrollerBackground(companyId) {
 }
 
 // ---------------------------------------------------------------------------
-// Navigation handler
+// Navigation
 // ---------------------------------------------------------------------------
 function navigateTo(targetId) {
   retractAllCharacters();
@@ -443,34 +527,34 @@ function navigateTo(targetId) {
     if (targetId === 'home') {
       if (headerElement) headerElement.classList.remove('hidden');
       updateScrollerBackground('home');
-      const baselineZoom = mobile ? 0.45 : 1.0;
-      moveCamera(1000, 1000, baselineZoom);
+      clearConstellationHighlight();
+      moveCamera(1000, 1000, mobile ? 0.45 : 1.0);
       return;
     }
 
     if (headerElement) headerElement.classList.add('hidden');
     updateScrollerBackground(targetId);
+    highlightConstellation(targetId);
 
     const targetCompany = document.getElementById(targetId);
     if (!targetCompany) return;
 
-    const posX = parseInt(targetCompany.style.left, 10);
-    const posY = parseInt(targetCompany.style.top, 10);
+    const pos = companyPositions[targetId] || {
+      x: parseInt(targetCompany.style.left, 10),
+      y: parseInt(targetCompany.style.top, 10)
+    };
     const focusZoom = mobile ? 0.82 : 1.55;
-
-    moveCamera(posX, posY, focusZoom);
+    moveCamera(pos.x, pos.y, focusZoom);
 
     setTimeout(() => {
       expandCharacters(targetCompany);
       galaxyOverlay.classList.add('active');
-
       const hubBtn = targetCompany.querySelector('.center-hub');
       if (hubBtn) hubBtn.setAttribute('aria-expanded', 'true');
     }, 920);
   }, 80);
 }
 
-// Wire up nav buttons
 navButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const target = btn.getAttribute('data-target');
@@ -478,21 +562,29 @@ navButtons.forEach(btn => {
   });
 });
 
-// Wire up center hub buttons
 hubButtons.forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    // Ignore if the user was actually dragging the map
-    if (hasDragged) {
-      hasDragged = false;
-      return;
-    }
+  btn.addEventListener('click', () => {
+    if (hasDragged) { hasDragged = false; return; }
     const company = btn.getAttribute('data-company');
     if (company) navigateTo(company);
+  });
+
+  // Hover also brightens constellation lines
+  btn.addEventListener('mouseenter', () => {
+    const company = btn.getAttribute('data-company');
+    if (company) highlightConstellation(company);
+  });
+  btn.addEventListener('mouseleave', () => {
+    // Only clear if we are not currently focused on a company
+    if (!headerElement.classList.contains('hidden')) {
+      // still at home overview — clear
+      clearConstellationHighlight();
+    }
   });
 });
 
 // ---------------------------------------------------------------------------
-// Initialisation
+// Init
 // ---------------------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', () => {
   const mobile = isMobileView();
@@ -501,16 +593,15 @@ window.addEventListener('DOMContentLoaded', () => {
   camera.y = 1000;
   applyCamera(false);
   updateScrollerBackground('home');
+  createConstellationLines();
 });
 
-// Re-center on orientation / resize (only when at home overview)
 let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
     if (!headerElement.classList.contains('hidden')) {
-      const mobile = isMobileView();
-      moveCamera(1000, 1000, mobile ? 0.45 : 1.0);
+      moveCamera(1000, 1000, isMobileView() ? 0.45 : 1.0);
     }
   }, 200);
 });
