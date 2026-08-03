@@ -4,8 +4,7 @@
  * Features:
  *   - Free pan & drag of the galaxy map
  *   - Animated glowing connection lines (hub → characters)
- *   - Orbiting character nodes
- *   - Permanent constellation lines between company hubs
+ *   - Smooth CSS-based orbiting character nodes
  *   - Per-character framing controls (alignX / alignY / scale)
  */
 
@@ -54,7 +53,6 @@ const companyData = {
   ]
 };
 
-// Company hub positions (must match style left/top in index.html)
 const companyPositions = {
   cfm:         { x: 1000, y: 1000 },
   ahs:         { x: 600,  y: 1350 },
@@ -167,129 +165,9 @@ viewport.addEventListener('selectstart', (e) => e.preventDefault());
 document.addEventListener('selectstart', (e) => { if (isDragging) e.preventDefault(); });
 
 // ---------------------------------------------------------------------------
-// Constellation lines (permanent links between company hubs)
+// Connection lines (hub → characters) — placed inside the orbit group
 // ---------------------------------------------------------------------------
-function createConstellationLines() {
-  // Remove old if re-init
-  const old = canvas.querySelector('.constellation-lines');
-  if (old) old.remove();
-
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('class', 'constellation-lines');
-  svg.setAttribute('width', '2000');
-  svg.setAttribute('height', '2000');
-  svg.setAttribute('viewBox', '0 0 2000 2000');
-  svg.style.position = 'absolute';
-  svg.style.left = '0';
-  svg.style.top = '0';
-  svg.style.pointerEvents = 'none';
-  svg.style.zIndex = '8';
-  svg.setAttribute('aria-hidden', 'true');
-
-  // Connect every hub to every other hub (full constellation)
-  const ids = Object.keys(companyPositions);
-  for (let i = 0; i < ids.length; i++) {
-    for (let j = i + 1; j < ids.length; j++) {
-      const a = companyPositions[ids[i]];
-      const b = companyPositions[ids[j]];
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', a.x);
-      line.setAttribute('y1', a.y);
-      line.setAttribute('x2', b.x);
-      line.setAttribute('y2', b.y);
-      line.setAttribute('class', 'constellation-line');
-      line.dataset.from = ids[i];
-      line.dataset.to = ids[j];
-      svg.appendChild(line);
-    }
-  }
-
-  // Insert behind the company containers
-  canvas.insertBefore(svg, canvas.firstChild);
-}
-
-function highlightConstellation(companyId) {
-  document.querySelectorAll('.constellation-line').forEach(line => {
-    const related = line.dataset.from === companyId || line.dataset.to === companyId;
-    line.classList.toggle('is-active', related);
-  });
-}
-
-function clearConstellationHighlight() {
-  document.querySelectorAll('.constellation-line').forEach(line => {
-    line.classList.remove('is-active');
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Orbit system for character nodes + their connection lines
-// ---------------------------------------------------------------------------
-let orbitRaf = null;
-let orbitAngle = 0;
-let orbitNodes = [];       // { node, baseAngle, radius }
-let orbitLines = [];       // { line, baseAngle, radius, center }
-let orbitContainer = null;
-
-const ORBIT_SPEED = 0.00018; // radians per ms — slow gentle orbit
-
-function startOrbit(container, nodes, lines, radius) {
-  stopOrbit();
-  orbitContainer = container;
-  orbitNodes = nodes;
-  orbitLines = lines;
-  orbitAngle = 0;
-
-  let lastTime = performance.now();
-
-  function tick(now) {
-    const dt = now - lastTime;
-    lastTime = now;
-    orbitAngle += ORBIT_SPEED * dt;
-
-    // Update node positions
-    orbitNodes.forEach(({ node, baseAngle, radius: r }) => {
-      const a = baseAngle + orbitAngle;
-      const x = Math.round(r * Math.cos(a));
-      const y = Math.round(r * Math.sin(a));
-      node.style.setProperty('--x', `${x}px`);
-      node.style.setProperty('--y', `${y}px`);
-      // Keep the current scale (1 or 1.18 on hover) — only update translate
-      const isHovered = node.matches(':hover, :focus-visible');
-      node.style.transform = `translate(${x}px, ${y}px) scale(${isHovered ? 1.18 : 1})`;
-    });
-
-    // Update connection line endpoints
-    orbitLines.forEach(({ line, baseAngle, radius: r, center }) => {
-      const a = baseAngle + orbitAngle;
-      const x = center + r * Math.cos(a);
-      const y = center + r * Math.sin(a);
-      line.setAttribute('x2', x);
-      line.setAttribute('y2', y);
-    });
-
-    orbitRaf = requestAnimationFrame(tick);
-  }
-
-  orbitRaf = requestAnimationFrame(tick);
-}
-
-function stopOrbit() {
-  if (orbitRaf) {
-    cancelAnimationFrame(orbitRaf);
-    orbitRaf = null;
-  }
-  orbitNodes = [];
-  orbitLines = [];
-  orbitContainer = null;
-}
-
-// ---------------------------------------------------------------------------
-// Connection lines (hub → characters) — now also feed the orbit system
-// ---------------------------------------------------------------------------
-function createConnectionLines(container, characters, radius) {
-  const oldSvg = container.querySelector('.connection-lines');
-  if (oldSvg) oldSvg.remove();
-
+function createConnectionLines(orbitGroup, characters, radius) {
   const size = 400;
   const center = size / 2;
 
@@ -306,12 +184,10 @@ function createConnectionLines(container, characters, radius) {
   svg.style.zIndex = '15';
   svg.setAttribute('aria-hidden', 'true');
 
-  const lineRefs = [];
-
   characters.forEach((char, index) => {
-    const baseAngle = (index * 2 * Math.PI) / characters.length;
-    const x = center + radius * Math.cos(baseAngle);
-    const y = center + radius * Math.sin(baseAngle);
+    const angle = (index * 2 * Math.PI) / characters.length;
+    const x = center + radius * Math.cos(angle);
+    const y = center + radius * Math.sin(angle);
 
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', center);
@@ -328,7 +204,6 @@ function createConnectionLines(container, characters, radius) {
     line.style.strokeDashoffset = length;
 
     svg.appendChild(line);
-    lineRefs.push({ line, baseAngle, radius, center });
 
     requestAnimationFrame(() => {
       setTimeout(() => {
@@ -338,20 +213,11 @@ function createConnectionLines(container, characters, radius) {
     });
   });
 
-  container.appendChild(svg);
-  return lineRefs;
-}
-
-function removeConnectionLines() {
-  document.querySelectorAll('.connection-lines').forEach(svg => {
-    svg.style.transition = 'opacity 0.3s ease';
-    svg.style.opacity = '0';
-    setTimeout(() => svg.remove(), 320);
-  });
+  orbitGroup.appendChild(svg);
 }
 
 // ---------------------------------------------------------------------------
-// Character nodes
+// Character nodes — pure CSS orbit (smooth, GPU-composited)
 // ---------------------------------------------------------------------------
 function expandCharacters(container) {
   const companyId = container.id;
@@ -361,15 +227,17 @@ function expandCharacters(container) {
 
   const radius = isMobileView() ? 125 : 170;
 
-  // Connection lines first (returns refs for orbit)
-  const lineRefs = createConnectionLines(container, characters, radius);
+  // Shared rotating group — CSS handles the spin (no JS per-frame work)
+  const orbitGroup = document.createElement('div');
+  orbitGroup.className = 'orbit-group';
+  container.appendChild(orbitGroup);
 
-  const nodeRefs = [];
+  createConnectionLines(orbitGroup, characters, radius);
 
   characters.forEach((char, index) => {
-    const baseAngle = (index * 2 * Math.PI) / total;
-    const x = Math.round(radius * Math.cos(baseAngle));
-    const y = Math.round(radius * Math.sin(baseAngle));
+    const angle = (index * 2 * Math.PI) / total;
+    const x = Math.round(radius * Math.cos(angle));
+    const y = Math.round(radius * Math.sin(angle));
 
     const node = document.createElement('button');
     node.type = 'button';
@@ -394,37 +262,33 @@ function expandCharacters(container) {
       openPortrait(char, node);
     });
 
-    container.appendChild(node);
-    nodeRefs.push({ node, baseAngle, radius });
+    orbitGroup.appendChild(node);
 
-    // Initial expand animation (no orbit yet)
+    // Expand into place, then enable CSS counter-rotation so faces stay upright
     requestAnimationFrame(() => {
       node.style.transform = `translate(${x}px, ${y}px) scale(1)`;
+      // After expand settles, hand control to the CSS orbit animation
+      setTimeout(() => {
+        node.classList.add('is-orbiting');
+      }, 600);
     });
   });
-
-  // Start the gentle orbit after the expand animation settles
-  setTimeout(() => {
-    // Disable the CSS transition so orbit updates are smooth
-    nodeRefs.forEach(({ node }) => {
-      node.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
-    });
-    startOrbit(container, nodeRefs, lineRefs, radius);
-  }, 650);
 }
 
 function retractAllCharacters() {
-  stopOrbit();
-  removeConnectionLines();
-  clearConstellationHighlight();
+  // Fade out connection lines + orbit group together
+  document.querySelectorAll('.orbit-group').forEach(group => {
+    group.style.transition = 'opacity 0.35s ease';
+    group.style.opacity = '0';
+    setTimeout(() => group.remove(), 360);
+  });
 
-  const activeNodes = document.querySelectorAll('.character-node');
-  activeNodes.forEach(node => {
-    node.style.transition = 'transform 0.55s cubic-bezier(0.19, 1, 0.22, 1)';
-    node.style.transform = 'translate(0, 0) scale(0)';
-    setTimeout(() => {
-      if (node.parentNode) node.remove();
-    }, 550);
+  // Also clean any leftover nodes (safety)
+  document.querySelectorAll('.character-node').forEach(node => {
+    if (node.parentNode && !node.closest('.orbit-group')) {
+      node.style.transform = 'translate(0, 0) scale(0)';
+      setTimeout(() => { if (node.parentNode) node.remove(); }, 550);
+    }
   });
 
   hubButtons.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
@@ -527,14 +391,12 @@ function navigateTo(targetId) {
     if (targetId === 'home') {
       if (headerElement) headerElement.classList.remove('hidden');
       updateScrollerBackground('home');
-      clearConstellationHighlight();
       moveCamera(1000, 1000, mobile ? 0.45 : 1.0);
       return;
     }
 
     if (headerElement) headerElement.classList.add('hidden');
     updateScrollerBackground(targetId);
-    highlightConstellation(targetId);
 
     const targetCompany = document.getElementById(targetId);
     if (!targetCompany) return;
@@ -568,19 +430,6 @@ hubButtons.forEach(btn => {
     const company = btn.getAttribute('data-company');
     if (company) navigateTo(company);
   });
-
-  // Hover also brightens constellation lines
-  btn.addEventListener('mouseenter', () => {
-    const company = btn.getAttribute('data-company');
-    if (company) highlightConstellation(company);
-  });
-  btn.addEventListener('mouseleave', () => {
-    // Only clear if we are not currently focused on a company
-    if (!headerElement.classList.contains('hidden')) {
-      // still at home overview — clear
-      clearConstellationHighlight();
-    }
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -593,7 +442,6 @@ window.addEventListener('DOMContentLoaded', () => {
   camera.y = 1000;
   applyCamera(false);
   updateScrollerBackground('home');
-  createConstellationLines();
 });
 
 let resizeTimer;
