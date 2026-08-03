@@ -5,7 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Interactive network map of major Japanese voicebank (Vocaloid / UTAU / Synthesizer V) IP holders and their characters. Explore Crypton Future Media, AHS, Kamitsubaki Studio, 1st PLACE, Twindrill, and Internet Co.">
   <meta name="theme-color" content="#05050a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Voicebank">
   <title>Voicebank Central — Interactive Network Map</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -96,5 +105,15 @@
   </dialog>
 
   <script src="script.js"></script>
+  <script>
+    // Register service worker for offline / install support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.warn('Service worker registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
