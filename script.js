@@ -118,6 +118,11 @@ let cameraStartX = 0;
 let cameraStartY = 0;
 let hasDragged = false; // distinguishes click from drag
 
+function clearSelection() {
+  const sel = window.getSelection?.();
+  if (sel && sel.removeAllRanges) sel.removeAllRanges();
+}
+
 function onPointerDown(e) {
   // Ignore if clicking interactive elements (hubs, nodes, nav, modal)
   if (e.target.closest('.center-hub, .character-node, .nav-btn, .modal-overlay, .modal-card')) {
@@ -134,12 +139,18 @@ function onPointerDown(e) {
   viewport.classList.add('is-dragging');
   canvas.style.transition = 'none';
 
+  // Prevent any existing text selection from starting/continuing
+  clearSelection();
+
   // Capture pointer so we keep receiving events even if cursor leaves
   viewport.setPointerCapture?.(e.pointerId);
 }
 
 function onPointerMove(e) {
   if (!isDragging) return;
+
+  // Keep clearing selection while dragging (some browsers re-create it)
+  clearSelection();
 
   const dx = e.clientX - dragStartX;
   const dy = e.clientY - dragStartY;
@@ -161,6 +172,7 @@ function onPointerUp(e) {
   isDragging = false;
   viewport.classList.remove('is-dragging');
   viewport.releasePointerCapture?.(e.pointerId);
+  clearSelection();
 }
 
 // Pointer events (works for mouse + touch + pen)
@@ -171,6 +183,10 @@ viewport.addEventListener('pointercancel', onPointerUp);
 
 // Prevent text selection / image drag while panning
 viewport.addEventListener('dragstart', (e) => e.preventDefault());
+viewport.addEventListener('selectstart', (e) => e.preventDefault());
+document.addEventListener('selectstart', (e) => {
+  if (isDragging) e.preventDefault();
+});
 
 // ---------------------------------------------------------------------------
 // Connection lines (SVG)
